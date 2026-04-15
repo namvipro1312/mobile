@@ -1,252 +1,179 @@
-﻿@{ ViewData["Title"] = "About"; }
+@{ ViewData["Title"] = "Giới thiệu"; }
 
-
-    <div class="breadcrumb-area mb-30">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="breadcrumb-wrap">
-                        <nav aria-label="breadcrumb">
-                            <ul class="breadcrumb">
-                                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">Giới thiệu</li>
-                            </ul>
-                        </nav>
-                    </div>
+<div class="breadcrumb-area mb-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-wrap">
+                    <nav aria-label="breadcrumb">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Giới thiệu</li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <main>
-        <section class="pt-30 pb-10">
-            <div class="container-fluid">
-                <div class="about-hero">
-                    <div class="row align-items-center">
-                        <div class="col-lg-8">
-                            <h1>Giới thiệu dự án thương mại điện tử</h1>
-                            <p>
-                                Trang giới thiệu được thiết kế lại theo phong cách hiện đại để phù hợp báo cáo đồ án.
-                                Đây là phiên bản tối ưu từ template Sinrato, tập trung vào mục tiêu, tính năng và luồng mua hàng.
-                            </p>
-                        </div>
-                        <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-                            <a href="@Url.Action("Shop", "Home")" class="about-action-btn">Đến trang Shop</a>
-                        </div>
-                    </div>
-                </div>
+<main class="about-page pb-40">
+    <section class="pb-30">
+        <div class="container-fluid">
+            <div class="about-hero-card">
                 <div class="row align-items-center">
-                    <div class="col-lg-6 mb-30">
-                        <img src="~/assets/img/banner/img1-top-sinrato1.jpg" alt="about-project" class="img-fluid w-100">
-                    </div>
-                    <div class="col-lg-6 mb-30">
-                        <div class="section-title">
-                            <h2>Về đồ án của nhóm</h2>
-                        </div>
-                        <p>
-                            Website này được phát triển từ template Sinrato và tối ưu lại theo hướng đồ án
-                            thương mại điện tử. Mục tiêu chính là xây dựng luồng mua sắm đầy đủ:
-                            Home - Shop - Product Detail - Cart - Checkout.
-                        </p>
-                        <p>
-                            Chúng tôi tập trung vào trải nghiệm người dùng, giao diện responsive, bố cục rõ ràng,
-                            và dễ dàng mở rộng khi kết nối dữ liệu thật ở giai đoạn tiếp theo.
-                        </p>
-                        <a href="@Url.Action("Shop", "Home")" class="about-action-btn">Khám phá sản phẩm</a>
-                        <a href="@Url.Action("Blog", "Home")" class="about-action-btn" style="margin-left: 10px;">Xem Blog</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="pb-30">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-6 col-lg-3 mb-30">
-                        <div class="about-metric">
-                            <h3>05</h3>
-                            <p>Trang chính</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3 mb-30">
-                        <div class="about-metric">
-                            <h3>01</h3>
-                            <p>Luồng mua hàng</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3 mb-30">
-                        <div class="about-metric">
-                            <h3>100%</h3>
-                            <p>Giao diện responsive</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-3 mb-30">
-                        <div class="about-metric">
-                            <h3>24/7</h3>
-                            <p>Sẵn sàng hỗ trợ</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="banner-statics pb-30">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-6 col-md-6 mb-30">
-                        <div class="single-banner-statics">
-                            <img src="~/assets/img/banner/img1-middle-sinrato1.jpg" alt="project-goal">
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 mb-30">
-                        <div class="single-banner-statics">
-                            <img src="~/assets/img/banner/img2-middle-sinrato1.jpg" alt="project-flow">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="pb-40">
-            <div class="container-fluid">
-                <div class="about-timeline">
-                    <h3 class="mb-3">Lộ trình phát triển</h3>
-                    <ul>
-                        <li><strong>Giai đoạn 1:</strong> Hoàn thiện tích hợp giao diện từ template.</li>
-                        <li><strong>Giai đoạn 2:</strong> Kết nối dữ liệu sản phẩm và bộ lọc danh mục.</li>
-                        <li><strong>Giai đoạn 3:</strong> Hoàn thiện giỏ hàng, thanh toán và quản lý đơn.</li>
-                        <li><strong>Giai đoạn 4:</strong> Kiểm thử tổng thể, tối ưu và triển khai.</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <section class="feature-style-one pt-20 pb-30">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="feature-inner fix">
-                            <div class="col">
-                                <div class="feature-item">
-                                    <div class="feature-icon">
-                                        <img src="~/assets/img/icon/wrapper1.png" alt="shipping">
-                                    </div>
-                                    <div class="feature-content">
-                                        <h4>Điều hướng nhanh</h4>
-                                        <p>Điều hướng rõ ràng giữa các trang chính.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="feature-item">
-                                    <div class="feature-icon">
-                                        <img src="~/assets/img/icon/wrapper2.png" alt="responsive">
-                                    </div>
-                                    <div class="feature-content">
-                                        <h4>Thiết kế responsive</h4>
-                                        <p>Tối ưu hiển thị trên desktop và mobile.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="feature-item">
-                                    <div class="feature-icon">
-                                        <img src="~/assets/img/icon/wrapper3.png" alt="modules">
-                                    </div>
-                                    <div class="feature-content">
-                                        <h4>Trang tách module</h4>
-                                        <p>Tách trang theo Home, Shop, Blog, About.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="feature-item">
-                                    <div class="feature-icon">
-                                        <img src="~/assets/img/icon/wrapper4.png" alt="extendable">
-                                    </div>
-                                    <div class="feature-content">
-                                        <h4>Dễ mở rộng</h4>
-                                        <p>Sẵn sàng kết nối database và backend.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="feature-item">
-                                    <div class="feature-icon">
-                                        <img src="~/assets/img/icon/wrapper5.png" alt="ready">
-                                    </div>
-                                    <div class="feature-content">
-                                        <h4>Sẵn sàng demo</h4>
-                                        <p>Phù hợp để demo và báo cáo đồ án.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="pb-40">
-            <div class="container-fluid">
-                <div class="row align-items-stretch">
-                    <div class="col-lg-5 mb-30">
-                        <div class="about-highlight h-100">
-                            <h3 class="mb-15">Điểm nổi bật của dự án</h3>
-                            <p class="mb-2">- Màu sắc và bố cục được tối ưu để demo trước hội đồng.</p>
-                            <p class="mb-2">- Các trang chính liên kết rõ ràng, dễ trình bày luồng người dùng.</p>
-                            <p class="mb-2">- Code tổ chức theo MVC, sẵn sàng mở rộng backend.</p>
-                            <p class="mb-0">- Nội dung About thể hiện đúng tinh chất đồ án tốt nghiệp.</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-7 mb-30">
-                        <div class="row">
-                            <div class="col-md-4 mb-20">
-                                <div class="about-team-card">
-                                    <div class="about-team-avatar">A</div>
-                                    <h5 class="mb-1">Thành viên 01</h5>
-                                    <p class="mb-0">Frontend & giao diện</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-20">
-                                <div class="about-team-card">
-                                    <div class="about-team-avatar">B</div>
-                                    <h5 class="mb-1">Thành viên 02</h5>
-                                    <p class="mb-0">Backend & API</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-20">
-                                <div class="about-team-card">
-                                    <div class="about-team-avatar">C</div>
-                                    <h5 class="mb-1">Thành viên 03</h5>
-                                    <p class="mb-0">Kiểm thử & tài liệu</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-2">
-                            <a href="@Url.Action("Index", "Home")" class="about-action-btn">Về trang chủ</a>
-                            <a href="@Url.Action("Contact", "Home")" class="about-action-btn" style="margin-left: 10px;">Liên hệ ngay</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="pt-10 pb-40">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="img-container fix text-center" style="padding: 40px 20px; background: #f7f7f7;">
-                            <h3 class="mb-15">Định hướng phát triển tiếp theo</h3>
-                            <p class="mb-25">
-                                Hoàn thiện đăng nhập, quản lý tài khoản, xử lý đơn hàng và kết nối dữ liệu thực tế.
+                    <div class="col-lg-7 mb-30 mb-lg-0">
+                        <div class="about-hero-content">
+                            <span class="about-kicker">Sinrato Store</span>
+                            <h1>Nền tảng mua sắm công nghệ rõ ràng, nhanh và đáng tin cậy.</h1>
+                            <p class="about-lead">
+                                Trang giới thiệu được làm lại theo hướng chuyên nghiệp hơn để phản ánh đúng một website bán hàng công nghệ:
+                                giao diện rõ ràng, thông tin minh bạch, quy trình mua hàng đầy đủ và sẵn sàng mở rộng vận hành thực tế.
                             </p>
-                            <a class="about-action-btn" href="@Url.Action("Contact", "Home")">Liên hệ</a>
+                            <div class="about-hero-actions">
+                                <a href="@Url.Action("Shop", "Shop")" class="about-primary-btn">Khám phá sản phẩm</a>
+                                <a href="@Url.Action("Contact", "Home")" class="about-secondary-btn">Liên hệ tư vấn</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="about-hero-media position-relative">
+                            <img src="~/assets/img/banner/img1-top-sinrato1.jpg" alt="Sinrato store" class="about-hero-image">
+                            <div class="about-hero-badge">
+                                <span>Trọng tâm phát triển</span>
+                                <strong>Mua hàng liền mạch từ tìm kiếm đến thanh toán QR ngân hàng.</strong>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
 
-    
+    <section class="pb-30">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-6 mb-30">
+                    <div class="about-section-card">
+                        <h2 class="about-grid-title">Chúng tôi đang xây dựng gì</h2>
+                        <p class="about-grid-text">
+                            Đây là website thương mại điện tử tập trung vào nhóm sản phẩm công nghệ, với các trang chính đã được tổ chức rõ:
+                            cửa hàng, chi tiết sản phẩm, giỏ hàng, yêu thích, so sánh, thanh toán và quản lý tài khoản.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-30">
+                    <div class="about-section-card">
+                        <h3>Điểm trọng tâm hiện tại</h3>
+                        <ul class="about-list">
+                            <li>Tối ưu trải nghiệm xem sản phẩm và lọc theo danh mục, giá, thương hiệu.</li>
+                            <li>Hoàn thiện luồng mua hàng thực tế từ thêm giỏ hàng đến đặt đơn.</li>
+                            <li>Hỗ trợ thanh toán QR ngân hàng và các phương thức thanh toán linh hoạt.</li>
+                            <li>Chuẩn hóa giao diện tiếng Việt, trạng thái active menu và điều hướng toàn site.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 col-xl-3 mb-30">
+                    <div class="about-metric-card">
+                        <span>Danh mục</span>
+                        <strong>Shop</strong>
+                        <p>Hiển thị rõ bộ lọc, sản phẩm nổi bật và truy cập nhanh tới các nhóm hàng chính.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3 mb-30">
+                    <div class="about-metric-card">
+                        <span>Trải nghiệm</span>
+                        <strong>Product</strong>
+                        <p>Thông tin cấu hình, hình ảnh, giá bán, phiên bản và khối mua hàng được trình bày đồng bộ.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3 mb-30">
+                    <div class="about-metric-card">
+                        <span>Thanh toán</span>
+                        <strong>Checkout</strong>
+                        <p>Đặt hàng theo luồng rõ ràng với QR ngân hàng, thanh toán tại cửa hàng hoặc COD.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-xl-3 mb-30">
+                    <div class="about-metric-card">
+                        <span>Tài khoản</span>
+                        <strong>Account</strong>
+                        <p>Theo dõi thông tin cá nhân, trạng thái mua hàng, giỏ hàng và danh sách yêu thích.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pb-30">
+        <div class="container-fluid">
+            <div class="row align-items-stretch">
+                <div class="col-lg-4 mb-30">
+                    <div class="about-process-card">
+                        <div class="about-process-number">01</div>
+                        <h4>Khám phá sản phẩm</h4>
+                        <p>Người dùng tìm kiếm và lọc sản phẩm theo danh mục, thương hiệu, mức giá để rút ngắn thời gian ra quyết định.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-30">
+                    <div class="about-process-card">
+                        <div class="about-process-number">02</div>
+                        <h4>So sánh và lựa chọn</h4>
+                        <p>Trang chi tiết và so sánh được làm rõ hơn để người mua đối chiếu cấu hình, giá bán và ưu đãi trước khi thêm giỏ hàng.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-30">
+                    <div class="about-process-card">
+                        <div class="about-process-number">03</div>
+                        <h4>Đặt hàng và thanh toán</h4>
+                        <p>Luồng checkout hỗ trợ nhiều phương thức thanh toán và điều hướng rõ tới bước xác nhận QR hoặc hoàn tất đơn hàng.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pb-30">
+        <div class="container-fluid">
+            <div class="row align-items-stretch">
+                <div class="col-lg-4 mb-30">
+                    <div class="about-value-card">
+                        <h4>Giao diện có hệ thống</h4>
+                        <p>Màu sắc, bo góc, trạng thái menu và card nội dung được đồng bộ để toàn bộ site nhìn chuyên nghiệp hơn.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-30">
+                    <div class="about-value-card">
+                        <h4>Nội dung phục vụ bán hàng</h4>
+                        <p>Mọi khối hiển thị được sắp lại theo mục tiêu bán hàng: giúp khách hiểu sản phẩm nhanh, thao tác ít và đi đúng luồng.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-30">
+                    <div class="about-value-card">
+                        <h4>Sẵn sàng mở rộng thực tế</h4>
+                        <p>Cấu trúc MVC đã tách nghiệp vụ rõ hơn để dễ phát triển tiếp phần quản trị, đơn hàng, đối soát thanh toán và báo cáo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="container-fluid">
+            <div class="about-cta-card">
+                <h3>Cần xem sản phẩm hoặc trao đổi trực tiếp?</h3>
+                <p>
+                    Bạn có thể vào ngay trang cửa hàng để duyệt danh mục sản phẩm, hoặc chuyển sang trang liên hệ nếu muốn tư vấn nhanh
+                    về cấu hình, đặt hàng và phương thức thanh toán phù hợp.
+                </p>
+                <div class="about-hero-actions">
+                    <a href="@Url.Action("Shop", "Shop")" class="about-primary-btn">Vào cửa hàng</a>
+                    <a href="@Url.Action("Contact", "Home")" class="about-secondary-btn">Mở trang liên hệ</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
