@@ -1,0 +1,724 @@
+﻿
+@using Microsoft.AspNetCore.Http
+@using Microsoft.EntityFrameworkCore
+@using System.Text.Json
+@inject MobileContext Db
+
+@functions {
+    private sealed class HeaderCategoryItem
+    {
+        public string Name { get; init; } = string.Empty;
+
+        public int ProductCount { get; init; }
+    }
+}
+
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty;
+    var currentKeyword = Context.Request.Query["keyword"].ToString();
+    var currentUserId = Context.Session.GetInt32("CurrentUserId");
+    var currentSearchCategory = Context.Request.Query["category"].FirstOrDefault() ?? string.Empty;
+    var currentCategorySelections = Context.Request.Query["category"]
+        .Where(value => !string.IsNullOrWhiteSpace(value))
+        .Select(value => value?.Trim() ?? string.Empty)
+        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+    var currentCategoryName = ViewData["CurrentCategoryName"]?.ToString();
+    if (!string.IsNullOrWhiteSpace(currentCategoryName))
+    {
+        currentCategorySelections.Add(currentCategoryName);
+
+        if (string.IsNullOrWhiteSpace(currentSearchCategory))
+        {
+            currentSearchCategory = currentCategoryName;
+        }
+    }
+
+    bool IsCurrentPage(string controller, params string[] actions) =>
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) &&
+        actions.Any(action => string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase));
+
+    string MenuClass(params string[] keys)
+    {
+        foreach (var key in keys)
+        {
+            var parts = key.Split(':', 2, StringSplitOptions.TrimEntries);
+            if (parts.Length == 2 && IsCurrentPage(parts[0], parts[1]))
+            {
+                return "active-menu";
+            }
+        }
+
+        return string.Empty;
+    }
+    string CategoryClass(string categoryName) => currentCategorySelections.Contains(categoryName) ? "is-active-category" : string.Empty;
+
+    var headerCategories = await Db.Categories
+        .AsNoTracking()
+        .Select(category => new HeaderCategoryItem
+        {
+            Name = category.CategoryName,
+            ProductCount = category.Products.Count(product => product.IsActive != false)
+        })
+        .OrderByDescending(category => category.ProductCount)
+        .ThenBy(category => category.Name)
+        .Take(10)
+        .ToListAsync();
+
+    var currentUser = currentUserId.HasValue
+        ? await Db.Users.AsNoTracking().FirstOrDefaultAsync(user => user.UserId == currentUserId.Value)
+        : null;
+
+    var wishlistCount = currentUserId.HasValue
+        ? await Db.Wishlists.AsNoTracking().CountAsync(item => item.UserId == currentUserId.Value)
+        : 0;
+
+    var cartPreviewItems = currentUserId.HasValue
+        ? await Db.CartItems
+            .AsNoTracking()
+            .Include(item => item.Product!)
+                .ThenInclude(product => product.ProductImages)
+            .Include(item => item.Product!)
+                .ThenInclude(product => product.Category)
+            .Include(item => item.Cart)
+            .Where(item => item.Cart!.UserId == currentUserId.Value && item.Product != null && item.Product.IsActive != false)
+            .OrderByDescending(item => item.CartItemId)
+            .Take(3)
+            .ToListAsync()
+        : [];
+
+    var cartCount = cartPreviewItems.Sum(item => item.Quantity ?? 0);
+    var cartSubtotal = cartPreviewItems.Sum(item => (item.Price ?? 0m) * Math.Max(item.Quantity ?? 1, 1));
+
+    var compareIdsRaw = Context.Session.GetString("CompareProductIds");
+    var compareCount = 0;
+    if (!string.IsNullOrWhiteSpace(compareIdsRaw))
+    {
+        try
+        {
+            compareCount = (JsonSerializer.Deserialize<List<int>>(compareIdsRaw) ?? []).Count;
+        }
+        catch
+        {
+            compareCount = 0;
+        }
+    }
+}
+
+<!doctype html>
+<html class="no-js" lang="vi">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <!-- Page Title -->
+	<title>@ViewData["Title"] - Sinrato</title>
+	<!--Fevicon-->
+	<link rel="icon" href="~/assets/img/icon/favicon.ico" type="image/x-icon" />
+	<!-- Bootstrap css -->
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <!-- linear-icon -->
+    <link rel="stylesheet" href="~/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/assets/css/linear-icon.css">
+    <!-- all css plugins css -->
+    <link rel="stylesheet" href="~/assets/css/plugins.css">
+    <!-- default style -->
+    <link rel="stylesheet" href="~/assets/css/default.css">
+    <!-- Main Style css -->
+    <link rel="stylesheet" href="~/assets/css/style.css">
+    <!-- responsive css -->
+    <link rel="stylesheet" href="~/assets/css/responsive.css">
+    <link rel="stylesheet" href="~/assets/css/site-custom.css">
+
+    <!-- Modernizer JS -->
+    <script src="~/assets/js/vendor/modernizr-3.5.0.min.js"></script>
+</head>
+<body>
+	<!--[if lte IE 9]>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+    <![endif]-->
+
+    <!-- header area start -->
+    <header class="header-pos">
+        <div class="header-top black-bg">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-8 col-12">
+                        <div class="header-top-left">
+                            <ul>
+                                <li><span>Email: </span>support@sinrato.com</li>
+                                <li>Miễn phí giao hàng cho đơn từ 99 USD</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-12">
+                        <div class="box box-right">
+                            <ul>
+                                <li class="settings account-entry">
+                                    <button type="button" class="ha-toggle account-trigger">Tài khoản<span class="lnr lnr-chevron-down"></span></button>
+                                    <ul class="box-dropdown ha-dropdown">
+                                        @if (currentUser is null)
+                                        {
+                                            <li><a href="@Url.Action("Register", "Account")">Đăng ký</a></li>
+                                            <li><a href="@Url.Action("Login", "Account")">Đăng nhập</a></li>
+                                        }
+                                        else
+                                        {
+                                            <li><a href="@Url.Action("MyAccount", "Account")">Xin chào, @(currentUser.FullName ?? currentUser.Username)</a></li>
+                                            <li>
+                                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                                    <button type="submit" class="header-inline-button">Đăng xuất</button>
+                                                </form>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                                <li class="settings">
+                                    <button type="button" class="ha-toggle">Ngôn ngữ<span class="lnr lnr-chevron-down"></span></button>
+                                    <ul class="box-dropdown ha-dropdown">
+                                        <li><a href="@Url.Action("Login", "Account")"><img src="~/assets/img/icon/en.png" alt=""> Tiếng Việt</a></li>
+                                        <li><a href="@Url.Action("Login", "Account")"><img src="~/assets/img/icon/ge.png" alt=""> English</a></li>
+                                    </ul>
+                                </li>
+                                <li class="currency">
+                                    <button type="button" class="ha-toggle">Tiền tệ<span class="lnr lnr-chevron-down"></span></button>
+                                    <ul class="box-dropdown ha-dropdown">
+                                        <li><a href="@Url.Action("Login", "Account")">VND</a></li>
+                                        <li><a href="@Url.Action("Login", "Account")">USD</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-middle">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-lg-2 col-md-4 col-sm-4 col-12">
+                        <div class="logo">
+                            <a href="@Url.Action("Index", "Home")"><img src="~/assets/img/logo/logo-sinrato.png" alt="brand-logo"></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-12 order-sm-last">
+                        <div class="header-middle-inner">
+                            <form asp-controller="Shop" asp-action="Shop" method="get">
+                                <div class="top-cat hm1">
+                                    <div class="search-form">
+                                        <select name="category">
+                                            <option value="">Tất cả danh mục</option>
+                                            @foreach (var category in headerCategories)
+                                            {
+                                                <option value="@category.Name" selected="@(string.Equals(currentSearchCategory, category.Name, StringComparison.OrdinalIgnoreCase))">
+                                                    @category.Name
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <input type="text" name="keyword" value="@currentKeyword" class="top-cat-field" placeholder="Tìm sản phẩm, thương hiệu...">
+                                <button type="submit" class="top-search-btn">Tìm</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-8 col-12 col-sm-8 order-lg-last">
+                        <div class="mini-cart-option">
+                            <ul>
+                                <li class="compare">
+                                    <a class="ha-toggle" href="@Url.Action("Compare", "Shop")"><span class="lnr lnr-sync"></span><span class="count">@compareCount</span>So sánh</a>
+                                </li>
+                                <li class="wishlist">
+                                    <a class="ha-toggle" href="@Url.Action("Wishlist", "Shop")"><span class="lnr lnr-heart"></span><span class="count">@wishlistCount</span>Yêu thích</a>
+                                </li>
+                                <li class="my-cart">
+                                    <button type="button" class="ha-toggle"><span class="lnr lnr-cart"></span><span class="count">@cartCount</span>Giỏ hàng</button>
+                                    <ul class="mini-cart-drop-down ha-dropdown">
+                                        @if (cartPreviewItems.Count == 0)
+                                        {
+                                            <li class="mb-20 px-3">
+                                                Giỏ hàng đang trống.
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            @foreach (var item in cartPreviewItems)
+                                            {
+                                                var previewImage = item.Product?.ProductImages
+                                                    .Where(image => !string.IsNullOrWhiteSpace(image.ImageUrl))
+                                                    .OrderByDescending(image => image.IsMain ?? false)
+                                                    .Select(image => image.ImageUrl)
+                                                    .FirstOrDefault() ?? item.Product?.Thumbnail ?? "~/assets/img/product/product-1.jpg";
+                                                var productUrl = Url.Action("Product", "Shop", new { id = item.ProductId });
+                                                var lineTotal = (item.Price ?? 0m) * Math.Max(item.Quantity ?? 1, 1);
+
+                                                <li class="mb-30">
+                                                    <div class="cart-img">
+                                                        <a href="@productUrl"><img alt="@item.Product?.Name" src="@Url.Content(previewImage)"></a>
+                                                    </div>
+                                                    <div class="cart-info">
+                                                        <h4><a href="@productUrl">@item.Product?.Name</a></h4>
+                                                        <span><span>@(item.Quantity ?? 1) x </span>@lineTotal.ToString("#,##0") VND</span>
+                                                    </div>
+                                                </li>
+                                            }
+                                        }
+                                        <li>
+                                            <div class="subtotal-text">Tạm tính: </div>
+                                            <div class="subtotal-price">@cartSubtotal.ToString("#,##0") VND</div>
+                                        </li>
+                                        <li>
+                                            <div class="subtotal-text">Giảm giá: </div>
+                                            <div class="subtotal-price">0 VND</div>
+                                        </li>
+                                        <li>
+                                            <div class="subtotal-text">VAT: </div>
+                                            <div class="subtotal-price">Đã gồm</div>
+                                        </li>
+                                        <li>
+                                            <div class="subtotal-text">Tổng cộng: </div>
+                                            <div class="subtotal-price"><span>@cartSubtotal.ToString("#,##0") VND</span></div>
+                                        </li>
+                                        <li class="mt-30">
+                                            <a class="cart-button" href="@Url.Action("Cart", "Checkout")">Xem giỏ hàng</a>
+                                        </li>
+                                        <li>
+                                            <a class="cart-button" href="@Url.Action("Checkout", "Checkout")">Thanh toán</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-top-menu theme-bg sticker">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="top-main-menu">
+                            <div class="categories-menu-bar">
+                                <div class="categories-menu-btn ha-toggle">
+                                    <div class="left">
+                                        <i class="lnr lnr-text-align-left"></i>
+                                        <span>Danh mục sản phẩm</span>
+                                    </div>
+                                    <div class="right">
+                                        <i class="lnr lnr-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <nav class="categorie-menus ha-dropdown">
+                                    <ul id="menu2">
+                                        @foreach (var category in headerCategories)
+                                        {
+                                            <li class="@CategoryClass(category.Name)">
+                                                <a href="@Url.Action("Shop", "Shop", new { category = category.Name })">
+                                                    <span class="category-link-text">@category.Name</span>
+                                                    <span class="category-count">@category.ProductCount</span>
+                                                </a>
+                                            </li>
+                                        }
+                                        <li class="category-item-parent category-all-link">
+                                            <a href="@Url.Action("Shop", "Shop")">
+                                                <span class="category-link-text">Xem tất cả sản phẩm</span>
+                                                <span class="lnr lnr-chevron-right"></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <div class="main-menu">
+                                <nav id="mobile-menu">
+                                    <ul>
+                                        <li class="@MenuClass("Home:Index")"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                                        <li class="@MenuClass("Shop:Shop","Shop:Product","Shop:Compare","Shop:Wishlist","Checkout:Cart","Checkout:Checkout","Checkout:PaymentQr","Account:MyAccount")"><a href="@Url.Action("Shop", "Shop")">Cửa hàng</a></li>
+                                        <li class="@MenuClass("Home:Blog")"><a href="@Url.Action("Blog", "Home")">Tin tức</a></li>
+                                        <li class="@MenuClass("Home:About")"><a href="@Url.Action("About", "Home")">Giới thiệu</a></li>
+                                        <li class="@MenuClass("Home:Contact")"><a href="@Url.Action("Contact", "Home")">Liên hệ</a></li>
+                                    </ul>
+                                </nav>
+                            </div> <!-- </div> end main menu -->
+                            <div class="header-call-action">
+                                <p><span class="lnr lnr-phone"></span>Hotline: <strong>1-001-234-5678</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 d-block d-lg-none">
+                        <div class="mobile-menu"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- header area end -->
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="container-fluid pt-20">
+            <div class="alert alert-success">@successMessage</div>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="container-fluid pt-20">
+            <div class="alert alert-danger">@errorMessage</div>
+        </div>
+    }
+
+    @RenderBody()
+
+    <div class="support-chatbox" id="supportChatbox"
+         data-home-url="@Url.Action("Index", "Home")"
+         data-shop-url="@Url.Action("Shop", "Shop")"
+         data-cart-url="@Url.Action("Cart", "Checkout")"
+         data-checkout-url="@Url.Action("Checkout", "Checkout")"
+         data-account-url="@(currentUser is null ? Url.Action("Login", "Account") : Url.Action("MyAccount", "Account"))"
+         data-contact-url="@Url.Action("Contact", "Home")"
+         data-compare-url="@Url.Action("Compare", "Shop")"
+         data-wishlist-url="@Url.Action("Wishlist", "Shop")"
+         data-user-name="@(currentUser?.FullName ?? currentUser?.Username ?? "bạn")">
+        <button type="button" class="support-chatbox-toggle" id="supportChatboxToggle" aria-expanded="false" aria-controls="supportChatboxPanel">
+            <span class="support-chatbox-toggle-icon"><i class="fa fa-comments"></i></span>
+            <span class="support-chatbox-toggle-text">Chat hỗ trợ</span>
+        </button>
+
+        <section class="support-chatbox-panel" id="supportChatboxPanel" aria-hidden="true">
+            <header class="support-chatbox-header">
+                <div>
+                    <strong>Hỗ trợ nhanh</strong>
+                    <p>Tra cứu mua hàng, giỏ hàng, thanh toán và tài khoản.</p>
+                </div>
+                <button type="button" class="support-chatbox-close" id="supportChatboxClose" aria-label="Đóng chatbox">
+                    <i class="fa fa-times"></i>
+                </button>
+            </header>
+
+            <div class="support-chatbox-body" id="supportChatboxBody"></div>
+
+            <div class="support-chatbox-quick-actions">
+                <button type="button" class="support-chatbox-chip" data-chat-action="cart">Giỏ hàng</button>
+                <button type="button" class="support-chatbox-chip" data-chat-action="checkout">Thanh toán</button>
+                <button type="button" class="support-chatbox-chip" data-chat-action="account">Tài khoản</button>
+                <button type="button" class="support-chatbox-chip" data-chat-action="contact">Liên hệ</button>
+            </div>
+
+            <form class="support-chatbox-form" id="supportChatboxForm">
+                <input type="text" class="support-chatbox-input" id="supportChatboxInput" placeholder="Nhập câu hỏi, ví dụ: thanh toán QR">
+                <button type="submit" class="support-chatbox-send">Gửi</button>
+            </form>
+        </section>
+    </div>
+
+<!-- footer area start -->  
+    <footer>
+        <!-- news-letter area start -->
+        <div class="newsletter-group">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="newsletter-box">
+                            <div class="newsletter-inner">
+                                <div class="newsletter-title">
+                                    <h3>Sign Up For Newsletters</h3>
+                                    <p>Be the First to Know. Sign up for newsletter today</p>
+                                </div>
+                                <div class="newsletter-box">
+                                    <form id="mc-form">
+                                        <input type="email" id="mc-email" autocomplete="off" class="email-box" placeholder="enter your email">
+                                        <button class="newsletter-btn" type="submit" id="mc-submit">subscribe !</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="link-follow">
+                                <a href="https://www.facebook.com/"><i class="fa fa-facebook"></i></a>
+                                <a href="https://plus.google.com/discover"><i class="fa fa-google-plus"></i></a>
+                                <a href="https://twitter.com/"><i class="fa fa-twitter"></i></a>
+                                <a href="https://www.youtube.com/"><i class="fa fa-youtube"></i></a>
+                            </div>
+                        </div>
+                        <!-- mailchimp-alerts Start -->
+                        <div class="mailchimp-alerts">
+                            <div class="mailchimp-submitting"></div><!-- mailchimp-submitting end -->
+                            <div class="mailchimp-success"></div><!-- mailchimp-success end -->
+                            <div class="mailchimp-error"></div><!-- mailchimp-error end -->
+                        </div><!-- mailchimp-alerts end -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- news-letter area end -->
+        <!-- footer top area start -->
+        <div class="footer-top pt-50 pb-50">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 col-sm-6">
+                        <div class="footer-single-widget">
+                            <div class="widget-title">
+                                <div class="footer-logo mb-30">
+                                    <a href="@Url.Action("Index", "Home")">
+                                         <img src="~/assets/img/logo/logo-sinrato.png" alt="">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="widget-body">
+                                <p>We are a team of designers and developers that create high quality Magento, Prestashop, Opencart.</p>
+                                <div class="payment-method">
+                                    <h4>payment</h4>
+                                    <img src="~/assets/img/payment/payment.png" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- single widget end -->
+                    <div class="col-lg-2 col-md-6 col-sm-6">
+                        <div class="footer-single-widget">
+                            <div class="widget-title">
+                                <h4>Information</h4>
+                            </div>
+                            <div class="widget-body">
+                                <div class="footer-useful-link">
+                                    <ul>
+                                        <li><a href="@Url.Action("About", "Home")">about us</a></li>
+                                        <li><a href="#">Delivery Information</a></li>
+                                        <li><a href="#">Privacy Policy</a></li>
+                                        <li><a href="#">Terms & Conditions</a></li>
+                                        <li><a href="#">Contact Us</a></li>
+                                        <li><a href="#">Returns</a></li>
+                                        <li><a href="#">Site Map</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- single widget end -->
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="footer-single-widget">
+                            <div class="widget-title">
+                                <h4>contact us</h4>
+                            </div>
+                            <div class="widget-body">
+                                <div class="footer-useful-link">
+                                    <ul>
+                                        <li><span>Address:</span> 4710-4890 Breckinridge St,Fayetteville, NC 28311</li>
+                                        <li><span>email:</span> support@@sinrato.com</li>
+                                        <li><span>Call us:</span> <strong>1-1001-234-5678</strong></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- single widget end -->
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="footer-single-widget">
+                            <div class="widget-title">
+                                <h4>Our Twitter Feed</h4>
+                            </div>
+                            <div class="widget-body">
+                                <div class="twitter-article">
+                                    <div class="twitter-text">
+                                        Check out "Alice - Multipurpose Responsive #Magento #Theme" on #Envato by <a href="#">@@sinratos</a> #Themeforest <a href="#">https://t.co/DNdhAwzm88</a>
+                                        <span class="tweet-time"><i class="fa fa-twitter"></i><a href="#">30 sep</a></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!-- single widget end -->
+                </div>
+            </div>
+        </div>
+        <!-- footer top area end -->
+        <!-- footer bottom area start -->
+        <div class="footer-bottom">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="footer-bottom-content">
+                            <div class="footer-copyright">
+                                <p>&copy; 2021 <b>Sinrato</b> Made with <i class="fa fa-heart text-danger"></i> by <a href="https://hasthemes.com/"><b>HasThemes</b></a></p>
+                            </div>
+                            <div class="footer-custom-link">
+                                <a href="#">Brands</a>
+                                <a href="#">Specials</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- footer bottom area end -->
+    </footer>
+    <!-- footer area end -->
+
+    <!-- Quick view modal start -->
+    <div class="modal fade" id="quickk_view">
+        <div class="container">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <div class="product-large-slider mb-20">
+                                    <div class="pro-large-img">
+                                        <img src="~/assets/img/product/product-4.jpg" alt=""/>
+                                    </div>
+                                    <div class="pro-large-img">
+                                        <img src="~/assets/img/product/product-5.jpg" alt=""/>
+                                    </div>
+                                    <div class="pro-large-img">
+                                        <img src="~/assets/img/product/product-6.jpg" alt=""/>
+                                    </div>
+                                    <div class="pro-large-img">
+                                        <img src="~/assets/img/product/product-7.jpg" alt=""/>
+                                    </div>
+                                    <div class="pro-large-img">
+                                        <img src="~/assets/img/product/product-8.jpg" alt=""/>
+                                    </div>
+                                    <div class="pro-large-img">
+                                        <img src="~/assets/img/product/product-9.jpg" alt=""/>
+                                    </div>
+                                </div>
+                                <div class="pro-nav">
+                                    <div class="pro-nav-thumb"><img src="~/assets/img/product/product-4.jpg" alt="" /></div>
+                                    <div class="pro-nav-thumb"><img src="~/assets/img/product/product-5.jpg" alt="" /></div>
+                                    <div class="pro-nav-thumb"><img src="~/assets/img/product/product-6.jpg" alt="" /></div>
+                                    <div class="pro-nav-thumb"><img src="~/assets/img/product/product-7.jpg" alt="" /></div>
+                                    <div class="pro-nav-thumb"><img src="~/assets/img/product/product-8.jpg" alt="" /></div>
+                                    <div class="pro-nav-thumb"><img src="~/assets/img/product/product-9.jpg" alt="" /></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-7">
+                                <div class="product-details-inner">
+                                    <div class="product-details-contentt">
+                                        <div class="pro-details-name mb-10">
+                                            <h3>Bose SoundLink Bluetooth Speaker</h3>
+                                        </div>
+                                        <div class="pro-details-review mb-20">
+                                            <ul>
+                                                <li>
+                                                    <span><i class="fa fa-star"></i></span>
+                                                    <span><i class="fa fa-star"></i></span>
+                                                    <span><i class="fa fa-star"></i></span>
+                                                    <span><i class="fa fa-star"></i></span>
+                                                    <span><i class="fa fa-star"></i></span>
+                                                </li>
+                                                <li><a href="#">1 Reviews</a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="price-box mb-15">
+                                            <span class="regular-price"><span class="special-price">Â£50.00</span></span>
+                                            <span class="old-price"><del>Â£60.00</del></span>
+                                        </div>
+                                        <div class="product-detail-sort-des pb-20">
+                                            <p>Canon's press material for the EOS 5D states that it 'defines (a) new D-SLR category', while we're not typically too concerned</p>
+                                        </div>
+                                        <div class="pro-details-list pt-20">
+                                            <ul>
+                                                <li><span>Availability :</span>In Stock</li>
+                                            </ul>
+                                        </div>
+                                        <div class="product-availabily-option mt-15 mb-15">
+                                            <h3>Available Options</h3>
+                                            <div class="color-optionn">
+                                                <h4><sup>*</sup>color</h4>
+                                                <ul>
+                                                    <li>
+                                                        <a class="c-black" href="#" title="Black"></a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="c-blue" href="#" title="Blue"></a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="c-brown" href="#" title="Brown"></a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="c-gray" href="#" title="Gray"></a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="c-red" href="#" title="Red"></a>
+                                                    </li>
+                                                </ul> 
+                                            </div>
+                                        </div>
+                                        <div class="pro-quantity-box mb-30">
+                                            <div class="qty-boxx">
+                                                <label>qty :</label>
+                                                <input type="text" placeholder="0">
+                                                <button class="btn-cart lg-btn">add to cart</button>
+                                            </div>
+                                        </div>
+                                        <div class="pro-social-sharing">
+                                            <label>share :</label>
+                                            <ul>
+                                                <li class="list-inline-item">
+                                                    <a href="#" class="bg-facebook" title="Facebook">
+                                                        <i class="fa fa-facebook"></i>
+                                                        <span>like 0</span>
+                                                    </a>
+                                                </li>
+                                                <li class="list-inline-item">
+                                                    <a href="#" class="bg-twitter" title="Twitter">
+                                                        <i class="fa fa-twitter"></i>
+                                                        <span>tweet</span>
+                                                    </a>
+                                                </li>
+                                                <li class="list-inline-item">
+                                                    <a href="#" class="bg-google" title="Google Plus">
+                                                        <i class="fa fa-google-plus"></i>
+                                                        <span>google +</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Quick view modal end -->
+
+	<!-- all js include here -->
+    <script src="~/assets/js/vendor/jquery-1.12.4.min.js"></script>
+    <script src="~/assets/js/bootstrap.min.js"></script>
+    <script src="~/assets/js/plugins.js"></script>
+    <script src="~/assets/js/ajax-mail.js"></script>
+    <script src="~/assets/js/main.js"></script>
+    <script src="~/assets/js/site-chatbox.js"></script>
+    <script>
+        document.querySelectorAll("[data-password-toggle]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                var selector = button.getAttribute("data-password-toggle");
+                var input = selector ? document.querySelector(selector) : null;
+                if (!input) {
+                    return;
+                }
+
+                var icon = button.querySelector("i");
+                var showing = input.getAttribute("type") === "text";
+                input.setAttribute("type", showing ? "password" : "text");
+
+                if (icon) {
+                    icon.className = showing ? "fa fa-eye" : "fa fa-eye-slash";
+                }
+
+                button.setAttribute("aria-label", showing ? "Hiển thị mật khẩu" : "Ẩn mật khẩu");
+            });
+        });
+    </script>
+</body>
+
+</html>
+
+
+
+
+

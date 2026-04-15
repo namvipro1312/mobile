@@ -1,0 +1,95 @@
+@model PaymentQrPageViewModel
+
+@{
+    ViewData["Title"] = "QR thanh toán";
+}
+
+<div class="breadcrumb-area mb-40">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-wrap">
+                    <nav aria-label="breadcrumb">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                            <li class="breadcrumb-item"><a href="@Url.Action("Cart", "Checkout")">Giỏ hàng</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">QR thanh toán</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="checkout-wrapper pt-10 pb-70">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-7 mb-30">
+                <div class="surface-panel qr-payment-panel">
+                    <div class="section-title left-aligned mb-25">
+                        <h3>Quét QR để thanh toán</h3>
+                    </div>
+                    <p class="mb-20">Đơn hàng <strong>#@Model.OrderId</strong> đã được tạo. Hệ thống đang chờ bạn chuyển khoản đúng số tiền và đúng nội dung để đối soát.</p>
+
+                    <div class="qr-payment-image-wrap">
+                        <img src="@Model.QrImageUrl" alt="QR thanh toán đơn hàng #@Model.OrderId" class="img-fluid qr-payment-image">
+                    </div>
+
+                    <div class="qr-copy-box mt-20">
+                        <div class="summary-line">
+                            <span>Số tiền</span>
+                            <strong>@Model.Amount.ToString("#,##0") VND</strong>
+                        </div>
+                        <div class="summary-line">
+                            <span>Ngân hàng</span>
+                            <strong>@Model.BankName (@Model.BankId)</strong>
+                        </div>
+                        <div class="summary-line">
+                            <span>Số tài khoản</span>
+                            <strong>@Model.AccountNumber</strong>
+                        </div>
+                        <div class="summary-line">
+                            <span>Chủ tài khoản</span>
+                            <strong>@Model.AccountName</strong>
+                        </div>
+                        <div class="summary-line total-line">
+                            <span>Nội dung chuyển khoản</span>
+                            <strong>@Model.TransferContent</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="surface-panel qr-payment-panel">
+                    <div class="section-title left-aligned mb-25">
+                        <h3>Trạng thái thanh toán</h3>
+                    </div>
+
+                    <div class="summary-line">
+                        <span>Trạng thái đơn</span>
+                        <strong>@Model.OrderStatus</strong>
+                    </div>
+                    <div class="summary-line">
+                        <span>Trạng thái thanh toán</span>
+                        <strong>@Model.PaymentStatus</strong>
+                    </div>
+
+                    <div class="checkout-inline-note mt-20">
+                        Giữ nguyên nội dung <strong>@Model.TransferContent</strong>. Sau khi nhận chuyển khoản, cửa hàng có thể cập nhật trạng thái thanh toán thủ công hoặc tự động ở bước sau.
+                    </div>
+
+                    <div class="action-form-stack mt-20">
+                        <a href="@Url.Action("Cart", "Checkout")" class="btn btn-outline-secondary">Về giỏ hàng</a>
+                        <a href="@Url.Action("Shop", "Shop")" class="btn btn-secondary">Tiếp tục mua sắm</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="scroll-top not-visible">
+    <i class="fa fa-angle-up"></i>
+</div>

@@ -1,0 +1,164 @@
+@model CheckoutPageViewModel
+
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<div class="breadcrumb-area mb-40">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-wrap">
+                    <nav aria-label="breadcrumb">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                            <li class="breadcrumb-item"><a href="@Url.Action("Cart", "Checkout")">Giỏ hàng</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Thanh toán</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="checkout-wrapper pt-10 pb-70">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <main id="primary" class="site-main">
+                    <form asp-action="Checkout" method="post" class="checkout-area">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <div class="checkout-form surface-panel">
+                                    <div class="section-title left-aligned mb-25">
+                                        <h3>Thông tin nhận hàng</h3>
+                                    </div>
+
+                                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label asp-for="FullName" class="form-label">Họ và tên</label>
+                                            <input asp-for="FullName" class="form-control">
+                                            <span asp-validation-for="FullName" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="Email" class="form-label">Email</label>
+                                            <input asp-for="Email" class="form-control">
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="Phone" class="form-label">Số điện thoại</label>
+                                            <input asp-for="Phone" class="form-control">
+                                            <span asp-validation-for="Phone" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label">Cách thanh toán</label>
+                                            <div class="checkout-inline-note">Thanh toán QR là hình thức online. Sau khi đặt hàng, hệ thống sẽ chuyển sang màn QR kèm nội dung chuyển khoản đúng theo đơn.</div>
+                                            <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-12">
+                                            <label asp-for="ShippingAddress" class="form-label">Địa chỉ nhận hàng</label>
+                                            <textarea asp-for="ShippingAddress" class="form-control" rows="4"></textarea>
+                                            <span asp-validation-for="ShippingAddress" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-12">
+                                            <label asp-for="Note" class="form-label">Ghi chú đơn hàng</label>
+                                            <textarea asp-for="Note" class="form-control" rows="4" placeholder="Ví dụ: gọi trước khi giao, nhận tại cửa hàng, xuất hóa đơn..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-5">
+                                <div class="order-summary surface-panel">
+                                    <div class="section-title left-aligned mb-25">
+                                        <h3>Đơn hàng của bạn</h3>
+                                    </div>
+
+                                    <div class="product-container">
+                                        @foreach (var item in Model.Items)
+                                        {
+                                            var productUrl = Url.Action("Product", "Shop", new { id = item.Product.ProductId });
+
+                                            <div class="product-list checkout-product-list">
+                                                <div class="product-inner d-flex align-items-center">
+                                                    <div class="product-image me-4">
+                                                        <a href="@productUrl">
+                                                            <img src="@Url.Content(item.ImageUrl)" alt="@item.Product.Name" title="@item.Product.Name">
+                                                        </a>
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <h5><a href="@productUrl">@item.Product.Name</a></h5>
+                                                        <p class="product-quantity">Số lượng: @item.Quantity</p>
+                                                        <p class="product-final-price">@item.LineTotal.ToString("#,##0") VND</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <div class="order-review">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <tbody>
+                                                    <tr class="cart-subtotal">
+                                                        <th>Tạm tính</th>
+                                                        <td class="text-end">@Model.Subtotal.ToString("#,##0") VND</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Phí giao hàng</th>
+                                                        <td class="text-end">Xác nhận sau</td>
+                                                    </tr>
+                                                    <tr class="order-total">
+                                                        <th>Tổng cộng</th>
+                                                        <td class="text-end"><strong>@Model.Subtotal.ToString("#,##0") VND</strong></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="checkout-payment-card">
+                                        <h4>Phương thức thanh toán</h4>
+                                        <div class="payment-choice-list">
+                                            <label class="payment-choice @(Model.PaymentMethod == "BANK_QR" ? "is-selected-payment" : null)">
+                                                <input asp-for="PaymentMethod" type="radio" value="BANK_QR">
+                                                <span>
+                                                    <strong>QR ngân hàng</strong>
+                                                    <small>Thanh toán online bằng chuyển khoản. Sau khi đặt hàng sẽ hiển thị mã QR và nội dung chuyển khoản.</small>
+                                                </span>
+                                            </label>
+                                            <label class="payment-choice @(Model.PaymentMethod == "STORE" ? "is-selected-payment" : null)">
+                                                <input asp-for="PaymentMethod" type="radio" value="STORE">
+                                                <span>
+                                                    <strong>Thanh toán tại cửa hàng</strong>
+                                                    <small>Giữ đơn trước, thanh toán khi đến cửa hàng nhận máy hoặc hoàn tất trực tiếp tại quầy.</small>
+                                                </span>
+                                            </label>
+                                            <label class="payment-choice @(Model.PaymentMethod == "COD" ? "is-selected-payment" : null)">
+                                                <input asp-for="PaymentMethod" type="radio" value="COD">
+                                                <span>
+                                                    <strong>Thanh toán khi nhận hàng</strong>
+                                                    <small>Áp dụng cho đơn giao tận nơi, xác nhận thanh toán lúc nhận hàng.</small>
+                                                </span>
+                                            </label>
+                                        </div>
+                                        <button type="submit" class="btn btn-secondary dark w-100 mt-20">Xác nhận đặt hàng</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </main>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="scroll-top not-visible">
+    <i class="fa fa-angle-up"></i>
+</div>

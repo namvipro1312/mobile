@@ -1,0 +1,165 @@
+@model MyAccountPageViewModel
+
+@{
+    ViewData["Title"] = "Tài khoản";
+    var userDisplayName = string.IsNullOrWhiteSpace(Model.User.FullName) ? (Model.User.Username ?? "Người dùng") : Model.User.FullName;
+}
+
+<div class="breadcrumb-area mb-50">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-wrap">
+                    <nav aria-label="breadcrumb">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Tài khoản của tôi</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="my-account-wrapper pb-50">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <main id="primary" class="site-main">
+                    <div class="user-dashboard">
+                        <div class="surface-panel my-account-panel mb-30">
+                            <div class="row g-4 align-items-stretch">
+                                <div class="col-lg-5">
+                                    <div class="account-card-highlight">
+                                        <span class="account-card-kicker">Tài khoản đang đăng nhập</span>
+                                        <h3>@userDisplayName</h3>
+                                        <p class="account-card-subtitle">Username: <strong>@(Model.User.Username ?? "Chưa cập nhật")</strong></p>
+                                        <div class="account-card-actions">
+                                            <a class="btn btn-secondary" href="@Url.Action("Cart", "Checkout")">Xem giỏ hàng</a>
+                                            <a class="btn btn-outline-secondary" href="@Url.Action("Wishlist", "Shop")">Sản phẩm yêu thích</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-7">
+                                    <div class="row g-3">
+                                        <div class="col-md-4">
+                                            <div class="account-stat-box">
+                                                <span>Đơn gần đây</span>
+                                                <strong>@Model.RecentOrders.Count</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="account-stat-box">
+                                                <span>Yêu thích</span>
+                                                <strong>@Model.WishlistCount</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="account-stat-box">
+                                                <span>Giỏ hàng</span>
+                                                <strong>@Model.CartItemCount</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="account-stat-box account-stat-wide">
+                                                <span>Tổng giá trị đơn chưa hoàn tất</span>
+                                                <strong>@Model.PendingAmount.ToString("#,##0") VND</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-4">
+                            <div class="col-lg-5">
+                                <div class="surface-panel my-account-panel">
+                                    <div class="section-title left-aligned mb-25">
+                                        <h3>Thông tin cá nhân</h3>
+                                    </div>
+
+                                    <div class="account-detail-list">
+                                        <div class="account-detail-row">
+                                            <span>Họ và tên</span>
+                                            <strong>@userDisplayName</strong>
+                                        </div>
+                                        <div class="account-detail-row">
+                                            <span>Email</span>
+                                            <strong>@(Model.User.Email ?? "Chưa cập nhật")</strong>
+                                        </div>
+                                        <div class="account-detail-row">
+                                            <span>Số điện thoại</span>
+                                            <strong>@(Model.User.Phone ?? "Chưa cập nhật")</strong>
+                                        </div>
+                                        <div class="account-detail-row">
+                                            <span>Địa chỉ</span>
+                                            <strong>@(Model.User.Address ?? "Chưa cập nhật")</strong>
+                                        </div>
+                                        <div class="account-detail-row">
+                                            <span>Vai trò</span>
+                                            <strong>@(Model.User.Role ?? "User")</strong>
+                                        </div>
+                                        <div class="account-detail-row">
+                                            <span>Ngày tạo tài khoản</span>
+                                            <strong>@((Model.User.CreatedAt ?? DateTime.Now).ToString("dd/MM/yyyy"))</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-7">
+                                <div class="surface-panel my-account-panel">
+                                    <div class="section-title left-aligned mb-25">
+                                        <h3>Đơn hàng gần đây</h3>
+                                    </div>
+
+                                    @if (Model.RecentOrders.Count == 0)
+                                    {
+                                        <div class="alert alert-info mb-0">Tài khoản này chưa có đơn hàng nào.</div>
+                                    }
+                                    else
+                                    {
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered cart-table-enhanced account-orders-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Mã đơn</th>
+                                                        <th>Ngày tạo</th>
+                                                        <th>Trạng thái</th>
+                                                        <th>Thanh toán</th>
+                                                        <th>Tổng tiền</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var order in Model.RecentOrders)
+                                                    {
+                                                        var latestPayment = order.Payments
+                                                            .OrderByDescending(item => item.PaymentId)
+                                                            .FirstOrDefault();
+
+                                                        <tr>
+                                                            <td>#@order.OrderId</td>
+                                                            <td>@((order.CreatedAt ?? DateTime.Now).ToString("dd/MM/yyyy"))</td>
+                                                            <td>@(order.Status ?? "Pending")</td>
+                                                            <td>@(latestPayment?.PaymentMethod ?? "Chưa có")</td>
+                                                            <td>@((order.TotalAmount ?? 0m).ToString("#,##0")) VND</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="scroll-top not-visible">
+    <i class="fa fa-angle-up"></i>
+</div>

@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace mobile.Models;
+
+public partial class Coupon
+{
+    public int CouponId { get; set; }
+
+    public string? Code { get; set; }
+
+    public decimal? Discount { get; set; }
+
+    public DateTime? ExpiryDate { get; set; }
+
+    public bool? IsActive { get; set; }
+}

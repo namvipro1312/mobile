@@ -1,0 +1,264 @@
+@model ComparePageViewModel
+
+@{
+    ViewData["Title"] = "So sánh";
+    var returnUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
+
+    static decimal FinalPrice(Product product)
+    {
+        var discount = product.Discount ?? 0m;
+        return discount > 0m ? product.Price * (1m - (discount / 100m)) : product.Price;
+    }
+
+    static string PrimaryImage(Product product)
+    {
+        var imageUrl = product.ProductImages
+            .Where(image => !string.IsNullOrWhiteSpace(image.ImageUrl))
+            .OrderByDescending(image => image.IsMain ?? false)
+            .Select(image => image.ImageUrl!.Trim())
+            .FirstOrDefault();
+
+        if (!string.IsNullOrWhiteSpace(imageUrl))
+        {
+            return imageUrl;
+        }
+
+        return string.IsNullOrWhiteSpace(product.Thumbnail)
+            ? "~/assets/img/product/product-1.jpg"
+            : product.Thumbnail.Trim();
+    }
+
+    static string DescriptionText(Product product)
+    {
+        if (string.IsNullOrWhiteSpace(product.Description))
+        {
+            return "Sản phẩm đang được đồng bộ từ cơ sở dữ liệu. Thông tin bổ sung sẽ tiếp tục hiển thị khi dữ liệu chi tiết được cập nhật thêm.";
+        }
+
+        var text = product.Description.Trim();
+        return text.Length > 260 ? $"{text[..260]}..." : text;
+    }
+}
+
+<div class="breadcrumb-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-wrap">
+                    <nav aria-label="breadcrumb">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">So sánh sản phẩm</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="comparison-wrapper pb-50">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <main id="primary" class="site-main">
+                    <div class="comparison surface-panel">
+                        <div class="section-title mb-25">
+                            <h3>So sánh sản phẩm</h3>
+                        </div>
+
+                        @if (Model.Products.Count == 0)
+                        {
+                            <div class="alert alert-info mb-0">
+                                Chưa có sản phẩm nào trong danh sách so sánh. Bạn có thể thêm tối đa 4 sản phẩm để đối chiếu nhanh.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive text-center">
+                                <table class="table table-bordered compare-style compare-table-enhanced compare-table-wide">
+                                    <thead>
+                                        <tr>
+                                            <th class="compare-label-col">Thông tin</th>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                <th class="compare-product-col">
+                                                    <div class="compare-product-heading">
+                                                        <strong>@product.Name</strong>
+                                                        <span>@(product.Brand ?? product.Category?.CategoryName ?? "Sản phẩm")</span>
+                                                    </div>
+                                                </th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="product-title">Hình ảnh</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                var productUrl = Url.Action("Product", "Shop", new { id = product.ProductId });
+
+                                                <td class="compare-product-col">
+                                                    <a href="@productUrl">
+                                                        <img src="@Url.Content(PrimaryImage(product))" alt="@product.Name" class="img-thumbnail compare-product-image">
+                                                    </a>
+                                                </td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">Giá bán</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                <td class="compare-product-col">
+                                                    <div class="price-box">
+                                                        <span class="regular-price">@FinalPrice(product).ToString("#,##0") VND</span>
+                                                        @if (product.Discount.HasValue && product.Discount.Value > 0)
+                                                        {
+                                                            <span class="old-price"><del>@product.Price.ToString("#,##0") VND</del></span>
+                                                        }
+                                                    </div>
+                                                </td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">Danh mục</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                <td class="compare-product-col">@(product.Category?.CategoryName ?? "Đang cập nhật")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">Thương hiệu</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                <td class="compare-product-col">@(string.IsNullOrWhiteSpace(product.Brand) ? "Đang cập nhật" : product.Brand)</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">Tồn kho</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                var stock = Math.Max(product.Stock ?? 0, 0);
+                                                <td class="compare-product-col">
+                                                    <span class="status-pill @(stock > 0 ? "status-success" : "status-muted")">
+                                                        @(stock > 0 ? $"Còn {stock} sản phẩm" : "Tạm hết hàng")
+                                                    </span>
+                                                </td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">Mô tả</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                <td class="description compare-product-col">@DescriptionText(product)</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">CPU</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                <td class="compare-product-col">@(product.ProductDetail?.Cpu ?? "Đang cập nhật")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">RAM</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                <td class="compare-product-col">@(product.ProductDetail?.Ram ?? "Đang cập nhật")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">Bộ nhớ</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                <td class="compare-product-col">@(product.ProductDetail?.Storage ?? "Đang cập nhật")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">Màn hình</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                <td class="compare-product-col">@(product.ProductDetail?.Screen ?? "Đang cập nhật")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">GPU</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                <td class="compare-product-col">@(product.ProductDetail?.Gpu ?? "Đang cập nhật")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">Pin</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                <td class="compare-product-col">@(product.ProductDetail?.Battery ?? "Đang cập nhật")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">Hệ điều hành</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                <td class="compare-product-col">@(product.ProductDetail?.Os ?? "Đang cập nhật")</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">Ngày cập nhật</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                <td class="compare-product-col">@((product.CreatedAt ?? DateTime.Now).ToString("dd/MM/yyyy"))</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">Đánh giá</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                var rating = product.Reviews.Where(item => item.Rating.HasValue).Select(item => item.Rating!.Value).ToList();
+                                                var average = rating.Count == 0 ? 0 : rating.Average();
+                                                <td class="compare-product-col">@average.ToString("0.0") / 5 (@product.Reviews.Count đánh giá)</td>
+                                            }
+                                        </tr>
+                                        <tr>
+                                            <td class="product-title">Thao tác</td>
+                                            @foreach (var product in Model.Products)
+                                            {
+                                                var stock = (product.Stock ?? 0) > 0;
+
+                                                <td class="compare-product-col">
+                                                    <div class="action-form-stack">
+                                                        <form asp-action="AddToCart" asp-controller="Checkout" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="productId" value="@product.ProductId">
+                                                            <input type="hidden" name="quantity" value="1">
+                                                            <input type="hidden" name="returnUrl" value="@returnUrl">
+                                                            <button type="submit" class="btn btn-secondary" disabled="@(stock ? null : "disabled")">Thêm vào giỏ</button>
+                                                        </form>
+                                                        <form asp-action="AddToWishlist" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="productId" value="@product.ProductId">
+                                                            <input type="hidden" name="returnUrl" value="@returnUrl">
+                                                            <button type="submit" class="btn btn-outline-secondary">Yêu thích</button>
+                                                        </form>
+                                                        <form asp-action="RemoveFromCompare" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="productId" value="@product.ProductId">
+                                                            <button type="submit" class="btn btn-outline-danger">Xóa</button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            }
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="scroll-top not-visible">
+    <i class="fa fa-angle-up"></i>
+</div>

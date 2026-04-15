@@ -1,0 +1,143 @@
+@model CartPageViewModel
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<div class="breadcrumb-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-wrap">
+                    <nav aria-label="breadcrumb">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Giỏ hàng</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="shopping-cart-wrapper pb-70">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <main id="primary" class="site-main">
+                    <div class="shopping-cart surface-panel">
+                        <div class="section-title mb-25">
+                            <h3>Giỏ hàng của bạn</h3>
+                        </div>
+
+                        @if (Model.Items.Count == 0)
+                        {
+                            <div class="alert alert-info mb-0">
+                                Chưa có sản phẩm nào trong giỏ hàng. Bạn có thể quay lại cửa hàng để tiếp tục mua sắm.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-bordered align-middle cart-table-enhanced">
+                                    <thead>
+                                        <tr>
+                                            <th>Ảnh</th>
+                                            <th>Sản phẩm</th>
+                                            <th>Số lượng</th>
+                                            <th>Đơn giá</th>
+                                            <th>Thành tiền</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Items)
+                                        {
+                                            var productUrl = Url.Action("Product", "Shop", new { id = item.Product.ProductId });
+                                            var stock = Math.Max(item.Product.Stock ?? 0, 0);
+
+                                            <tr>
+                                                <td class="cart-image-cell">
+                                                    <a href="@productUrl">
+                                                        <img src="@Url.Content(item.ImageUrl)" alt="@item.Product.Name" class="img-thumbnail cart-table-image">
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a href="@productUrl" class="table-product-link">@item.Product.Name</a>
+                                                    <div class="table-product-meta">Danh mục: @(item.Product.Category?.CategoryName ?? "Đang cập nhật")</div>
+                                                    <div class="table-product-meta">Thương hiệu: @(string.IsNullOrWhiteSpace(item.Product.Brand) ? "Đang cập nhật" : item.Product.Brand)</div>
+                                                    <div class="table-product-meta">Tồn kho: @stock sản phẩm</div>
+                                                </td>
+                                                <td class="cart-qty-cell">
+                                                    <form asp-action="UpdateCartItem" method="post" class="form-qty-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="cartItemId" value="@item.CartItemId">
+                                                        <input type="number" name="quantity" value="@item.Quantity" min="0" class="form-control">
+                                                        <button type="submit" class="btn btn-secondary">Cập nhật</button>
+                                                    </form>
+                                                    <small class="text-muted d-block mt-10">Nhập 0 để xóa nhanh sản phẩm.</small>
+                                                </td>
+                                                <td class="text-nowrap">@item.UnitPrice.ToString("#,##0") VND</td>
+                                                <td class="text-nowrap fw-bold">@item.LineTotal.ToString("#,##0") VND</td>
+                                                <td>
+                                                    <div class="action-form-stack">
+                                                        <form asp-action="RemoveCartItem" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="cartItemId" value="@item.CartItemId">
+                                                            <button type="submit" class="btn btn-outline-danger">Xóa</button>
+                                                        </form>
+                                                        <form asp-action="AddToCompare" asp-controller="Shop" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="productId" value="@item.Product.ProductId">
+                                                            <input type="hidden" name="returnUrl" value="@Url.Action("Cart", "Checkout")">
+                                                            <button type="submit" class="btn btn-outline-secondary">So sánh</button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="row mt-30">
+                                <div class="col-lg-7"></div>
+                                <div class="col-lg-5">
+                                    <div class="order-summary-panel">
+                                        <h4>Tóm tắt đơn hàng</h4>
+                                        <div class="summary-line">
+                                            <span>Tạm tính</span>
+                                            <strong>@Model.Subtotal.ToString("#,##0") VND</strong>
+                                        </div>
+                                        <div class="summary-line">
+                                            <span>Phí giao hàng</span>
+                                            <strong>Sẽ tính ở bước xác nhận</strong>
+                                        </div>
+                                        <div class="summary-line total-line">
+                                            <span>Tổng cộng</span>
+                                            <strong>@Model.Subtotal.ToString("#,##0") VND</strong>
+                                        </div>
+                                        <a href="@Url.Action("Checkout", "Checkout")" class="btn btn-secondary dark w-100 mt-20">Tiến hành thanh toán</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="cart-button-wrapper d-flex flex-wrap justify-content-between gap-3 mt-30">
+                            <a href="@Url.Action("Shop", "Shop")" class="btn btn-secondary">Tiếp tục mua sắm</a>
+                            @if (Model.Items.Count > 0)
+                            {
+                                <a href="@Url.Action("Wishlist", "Shop")" class="btn btn-outline-secondary">Xem sản phẩm yêu thích</a>
+                            }
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="scroll-top not-visible">
+    <i class="fa fa-angle-up"></i>
+</div>

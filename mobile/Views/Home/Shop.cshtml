@@ -1,0 +1,343 @@
+@model ShopPageViewModel
+
+@{
+    ViewData["Title"] = "Shop";
+    var returnUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
+
+    static decimal FinalPrice(Product product)
+    {
+        var discount = product.Discount ?? 0m;
+        return discount > 0m ? product.Price * (1m - (discount / 100m)) : product.Price;
+    }
+
+    static List<string> ProductImages(Product product)
+    {
+        var urls = product.ProductImages
+            .Where(image => !string.IsNullOrWhiteSpace(image.ImageUrl))
+            .OrderByDescending(image => image.IsMain ?? false)
+            .Select(image => image.ImageUrl!.Trim())
+            .ToList();
+
+        if (!string.IsNullOrWhiteSpace(product.Thumbnail))
+        {
+            urls.Insert(0, product.Thumbnail.Trim());
+        }
+
+        var distinctUrls = urls
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (distinctUrls.Count == 0)
+        {
+            distinctUrls.Add("~/assets/img/product/product-1.jpg");
+        }
+
+        return distinctUrls;
+    }
+
+    string selectedSort = string.IsNullOrWhiteSpace(Model.SortBy) ? "newest" : Model.SortBy;
+}
+
+<div class="breadcrumb-area mb-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-wrap">
+                    <nav aria-label="breadcrumb">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Shop</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-wrapper pt-35">
+    <div class="container-fluid">
+        <form method="get">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="shop-sidebar-inner mb-30">
+                        <div class="single-sidebar mb-45">
+                            <div class="sidebar-inner-title mb-25">
+                                <h3>Tim kiem nhanh</h3>
+                            </div>
+                            <div class="sidebar-content-box">
+                                <input class="form-control mb-15" type="text" name="keyword" value="@Model.Keyword" placeholder="Ten san pham, thuong hieu...">
+                            </div>
+                        </div>
+
+                        <div class="single-sidebar mb-45">
+                            <div class="sidebar-inner-title mb-25">
+                                <h3>Khoang gia</h3>
+                            </div>
+                            <div class="sidebar-content-box">
+                                <input class="form-control mb-10" type="number" min="0" step="1000" name="minPrice" value="@Model.SelectedMinPrice" placeholder="Gia tu">
+                                <input class="form-control mb-10" type="number" min="0" step="1000" name="maxPrice" value="@Model.SelectedMaxPrice" placeholder="Gia den">
+                                <small class="text-muted">
+                                    Khoang trong kho: @((Model.MinPrice ?? 0).ToString("#,##0")) -
+                                    @((Model.MaxPrice ?? 0).ToString("#,##0")) VND
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="single-sidebar mb-45">
+                            <div class="sidebar-inner-title mb-25">
+                                <h3>Danh muc</h3>
+                            </div>
+                            <div class="sidebar-content-box">
+                                <div class="filter-attribute-container">
+                                    <ul>
+                                        @foreach (var category in Model.Categories)
+                                        {
+                                            <li>
+                                                <label class="d-flex align-items-center gap-2">
+                                                    <input type="checkbox" name="category" value="@category.Name" @(category.IsSelected ? "checked" : null)>
+                                                    <span>@category.Name (@category.Count)</span>
+                                                </label>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="single-sidebar mb-45">
+                            <div class="sidebar-inner-title mb-25">
+                                <h3>Thuong hieu</h3>
+                            </div>
+                            <div class="sidebar-content-box">
+                                <div class="filter-attribute-container">
+                                    <ul>
+                                        @foreach (var brand in Model.Brands)
+                                        {
+                                            <li>
+                                                <label class="d-flex align-items-center gap-2">
+                                                    <input type="checkbox" name="brand" value="@brand.Name" @(brand.IsSelected ? "checked" : null)>
+                                                    <span>@brand.Name (@brand.Count)</span>
+                                                </label>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="single-sidebar mb-30">
+                            <button type="submit" class="btn-cart d-inline-block border-0">Ap dung bo loc</button>
+                            <a class="btn-cart d-inline-block mt-10" href="@Url.Action("Shop", "Shop")">Xoa loc</a>
+                        </div>
+                    </div>
+
+                    <div class="single-sidebar mb-30">
+                        <div class="sidebar-thumb">
+                            <a href="#"><img src="~/assets/img/banner/img-static-sidebar.jpg" alt="sidebar-banner"></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-9 order-first order-lg-last">
+                    <div class="product-shop-main-wrapper mb-50">
+                        <div class="shop-baner-img mb-70">
+                            <a href="#"><img src="~/assets/img/banner/category-image.jpg" alt="shop-banner"></a>
+                        </div>
+
+                        <div class="shop-top-bar mb-30">
+                            <div class="row align-items-center">
+                                <div class="col-md-6">
+                                    <div class="top-bar-left">
+                                        <div class="product-view-mode">
+                                            <a href="#" data-target="column_3"><span>3-col</span></a>
+                                            <a class="active" href="#" data-target="grid"><span>4-col</span></a>
+                                            <a href="#" data-target="list"><span>list</span></a>
+                                        </div>
+                                        <div class="product-page">
+                                            <p>Dang hien thi @Model.Products.Count san pham</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="top-bar-right">
+                                        <div class="product-short">
+                                            <p>Sort By :</p>
+                                            <select class="nice-select" name="sortBy" onchange="this.form.submit()">
+                                                <option value="newest" selected="@(selectedSort == "newest")">Newest</option>
+                                                <option value="price-asc" selected="@(selectedSort == "price-asc")">Price Low To High</option>
+                                                <option value="price-desc" selected="@(selectedSort == "price-desc")">Price High To Low</option>
+                                                <option value="name-asc" selected="@(selectedSort == "name-asc")">Name A - Z</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (Model.Products.Count == 0)
+                        {
+                            <div class="alert alert-info">
+                                Khong tim thay san pham phu hop voi bo loc hien tai.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="shop-product-wrap grid row">
+                                @foreach (var product in Model.Products)
+                                {
+                                    var productUrl = Url.Action("Product", "Shop", new { id = product.ProductId });
+                                    var images = ProductImages(product);
+                                    var primaryImage = images.First();
+                                    var secondaryImage = images.Skip(1).FirstOrDefault() ?? primaryImage;
+                                    var finalPrice = FinalPrice(product);
+                                    var shortDescription = string.IsNullOrWhiteSpace(product.Description)
+                                        ? "Thong tin san pham dang duoc dong bo truc tiep tu SQL Server."
+                                        : product.Description.Trim();
+
+                                    <div class="col-lg-3 col-md-4 col-sm-6">
+                                        <div class="product-item mb-30">
+                                            <div class="product-thumb">
+                                                <a href="@productUrl">
+                                                    <img src="@Url.Content(primaryImage)" class="pri-img" alt="@product.Name">
+                                                    <img src="@Url.Content(secondaryImage)" class="sec-img" alt="@product.Name">
+                                                </a>
+                                                <div class="box-label">
+                                                    @if (product.Discount.HasValue && product.Discount.Value > 0)
+                                                    {
+                                                        <div class="label-product label_sale">
+                                                            <span>-@product.Discount.Value.ToString("0")%</span>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="label-product label_new">
+                                                            <span>new</span>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <div class="action-links action-links-forms">
+                                                    <form asp-action="AddToWishlist" method="post" class="icon-action-form" title="Wishlist">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="productId" value="@product.ProductId">
+                                                        <input type="hidden" name="returnUrl" value="@returnUrl">
+                                                        <button type="submit" class="icon-action-button"><i class="lnr lnr-heart"></i></button>
+                                                    </form>
+                                                    <form asp-action="AddToCompare" method="post" class="icon-action-form" title="Compare">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="productId" value="@product.ProductId">
+                                                        <input type="hidden" name="returnUrl" value="@returnUrl">
+                                                        <button type="submit" class="icon-action-button"><i class="lnr lnr-sync"></i></button>
+                                                    </form>
+                                                    <a href="@productUrl" title="View Product"><i class="lnr lnr-magnifier"></i></a>
+                                                </div>
+                                            </div>
+                                            <div class="product-caption">
+                                                <div class="manufacture-product">
+                                                    <p>
+                                                        <a href="@Url.Action("Shop", "Shop", new { brand = product.Brand })">
+                                                            @(product.Brand ?? product.Category?.CategoryName ?? "San pham")
+                                                        </a>
+                                                    </p>
+                                                </div>
+                                                <div class="product-name">
+                                                    <h4><a href="@productUrl">@product.Name</a></h4>
+                                                </div>
+                                                <div class="ratings">
+                                                    <span class="yellow"><i class="lnr lnr-star"></i></span>
+                                                    <span class="yellow"><i class="lnr lnr-star"></i></span>
+                                                    <span class="yellow"><i class="lnr lnr-star"></i></span>
+                                                    <span class="yellow"><i class="lnr lnr-star"></i></span>
+                                                    <span><i class="lnr lnr-star"></i></span>
+                                                </div>
+                                                <div class="price-box">
+                                                    <span class="regular-price">@finalPrice.ToString("#,##0") VND</span>
+                                                    @if (product.Discount.HasValue && product.Discount.Value > 0)
+                                                    {
+                                                        <span class="old-price"><del>@product.Price.ToString("#,##0") VND</del></span>
+                                                    }
+                                                </div>
+                                                <a class="btn-cart" href="@productUrl">xem chi tiet</a>
+                                            </div>
+                                        </div>
+
+                                        <div class="sinrato-list-item mb-30">
+                                            <div class="sinrato-thumb">
+                                                <a href="@productUrl">
+                                                    <img src="@Url.Content(primaryImage)" class="pri-img" alt="@product.Name">
+                                                    <img src="@Url.Content(secondaryImage)" class="sec-img" alt="@product.Name">
+                                                </a>
+                                                <div class="box-label">
+                                                    @if (product.Discount.HasValue && product.Discount.Value > 0)
+                                                    {
+                                                        <div class="label-product label_sale">
+                                                            <span>-@product.Discount.Value.ToString("0")%</span>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="sinrato-list-item-content">
+                                                <div class="manufacture-product">
+                                                    <span><a href="@Url.Action("Shop", "Shop", new { brand = product.Brand })">@(product.Brand ?? "Brand")</a></span>
+                                                </div>
+                                                <div class="sinrato-product-name">
+                                                    <h4><a href="@productUrl">@product.Name</a></h4>
+                                                </div>
+                                                <div class="sinrato-ratings mb-15">
+                                                    <span><i class="fa fa-star"></i></span>
+                                                    <span><i class="fa fa-star"></i></span>
+                                                    <span><i class="fa fa-star"></i></span>
+                                                    <span><i class="fa fa-star"></i></span>
+                                                    <span><i class="fa fa-star"></i></span>
+                                                </div>
+                                                <div class="sinrato-product-des">
+                                                    <p>@shortDescription</p>
+                                                </div>
+                                            </div>
+                                            <div class="sinrato-box-action">
+                                                <div class="price-box">
+                                                    <span class="regular-price">@finalPrice.ToString("#,##0") VND</span>
+                                                    @if (product.Discount.HasValue && product.Discount.Value > 0)
+                                                    {
+                                                        <span class="old-price"><del>@product.Price.ToString("#,##0") VND</del></span>
+                                                    }
+                                                </div>
+                                                <a class="btn-cart" href="@productUrl">xem chi tiet</a>
+                                                <div class="action-links sinrat-list-icon action-links-forms">
+                                                    <form asp-action="AddToWishlist" method="post" class="icon-action-form" title="Wishlist">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="productId" value="@product.ProductId">
+                                                        <input type="hidden" name="returnUrl" value="@returnUrl">
+                                                        <button type="submit" class="icon-action-button"><i class="lnr lnr-heart"></i></button>
+                                                    </form>
+                                                    <form asp-action="AddToCompare" method="post" class="icon-action-form" title="Compare">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="productId" value="@product.ProductId">
+                                                        <input type="hidden" name="returnUrl" value="@returnUrl">
+                                                        <button type="submit" class="icon-action-button"><i class="lnr lnr-sync"></i></button>
+                                                    </form>
+                                                    <a href="@productUrl" title="View Product"><i class="lnr lnr-magnifier"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        <div class="paginatoin-area mt-30">
+                            <div class="row">
+                                <div class="col-12">
+                                    <ul class="pagination-box pagination-style-2">
+                                        <li class="active"><a href="#">1</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

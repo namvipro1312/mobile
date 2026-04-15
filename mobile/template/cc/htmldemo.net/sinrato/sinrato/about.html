@@ -1,0 +1,624 @@
+﻿<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Giới thiệu đồ án thương mại điện tử">
+    <title>Giới thiệu - Sinrato</title>
+    <link rel="icon" href="assets/img/icon/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/css/linear-icon.css">
+    <link rel="stylesheet" href="assets/css/plugins.css">
+    <link rel="stylesheet" href="assets/css/default.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <style>
+        @keyframes floatUp {
+            from { transform: translateY(14px); opacity: .75; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .about-hero {
+            background: linear-gradient(120deg, #0f172a 0%, #1e293b 45%, #f7c600 100%);
+            color: #fff;
+            border-radius: 16px;
+            padding: 50px 38px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.25);
+            animation: floatUp .7s ease-out both;
+        }
+        .about-hero h1 { color: #fff; font-size: 42px; margin-bottom: 14px; }
+        .about-hero p { color: rgba(255,255,255,.9); font-size: 16px; }
+        .about-metric {
+            background: #fff;
+            border-radius: 12px;
+            text-align: center;
+            padding: 24px 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,.08);
+            height: 100%;
+        }
+        .about-metric h3 { font-size: 34px; color: #111827; margin-bottom: 6px; }
+        .about-metric p { margin: 0; color: #6b7280; font-weight: 600; }
+        .about-timeline {
+            background: #fff;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 8px 20px rgba(0,0,0,.08);
+        }
+        .about-timeline li { margin-bottom: 10px; }
+        .about-timeline li:last-child { margin-bottom: 0; }
+        .about-team-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 24px 18px;
+            text-align: center;
+            box-shadow: 0 10px 26px rgba(0,0,0,.09);
+            height: 100%;
+            transition: transform .25s ease, box-shadow .25s ease;
+        }
+        .about-team-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 34px rgba(0,0,0,.14);
+        }
+        .about-team-avatar {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 14px;
+            border-radius: 999px;
+            background: #111827;
+            color: #f7c600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 22px;
+        }
+        .about-highlight {
+            background: #111827;
+            color: #fff;
+            border-radius: 14px;
+            padding: 30px;
+        }
+        .about-highlight p { color: rgba(255,255,255,.9); }
+        .about-action-btn {
+            display: inline-block;
+            background: #f7c600;
+            color: #111827 !important;
+            border: 2px solid #111827;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: .3px;
+        }
+        .about-action-btn:hover {
+            background: #111827;
+            color: #f7c600 !important;
+            border-color: #f7c600;
+        }
+    </style>
+    <script src="assets/js/vendor/modernizr-3.5.0.min.js"></script>
+</head>
+<body>
+    <header class="header-pos">
+        <div class="header-top black-bg">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-8 col-12">
+                        <div class="header-top-left">
+                            <ul>
+                                <li><span>Email: </span>support@sinrato.com</li>
+                                <li>Free Shipping for all Order of $99</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-12">
+                        <div class="box box-right">
+                            <ul>
+                                <li class="settings">
+                                    <button type="button" class="ha-toggle">My Account<span class="lnr lnr-chevron-down"></span></button>
+                                    <ul class="box-dropdown ha-dropdown">
+                                        <li><a href="register.html">Register</a></li>
+                                        <li><a href="login.html">Login</a></li>
+                                    </ul>
+                                </li>
+                                <li class="settings">
+                                    <button type="button" class="ha-toggle">Language<span class="lnr lnr-chevron-down"></span></button>
+                                    <ul class="box-dropdown ha-dropdown">
+                                        <li><a href="login.html"><img src="assets/img/icon/en.png" alt=""> English</a></li>
+                                        <li><a href="login.html"><img src="assets/img/icon/ge.png" alt=""> Germany</a></li>
+                                    </ul>
+                                </li>
+                                <li class="currency">
+                                    <button type="button" class="ha-toggle">Currency<span class="lnr lnr-chevron-down"></span></button>
+                                    <ul class="box-dropdown ha-dropdown">
+                                        <li><a href="login.html">€ Euro</a></li>
+                                        <li><a href="login.html">$ US Doller</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-middle">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-lg-2 col-md-4 col-sm-4 col-12">
+                        <div class="logo">
+                            <a href="index.html"><img src="assets/img/logo/logo-sinrato.png" alt="brand-logo"></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12 col-12 order-sm-last">
+                        <div class="header-middle-inner">
+                            <form action="method">
+                                <div class="top-cat hm1">
+                                    <div class="search-form">
+                                        <select>
+                                            <optgroup label="Electronics">
+                                                <option value="volvo">Laptop</option>
+                                                <option value="saab">watch</option>
+                                                <option value="saab">air cooler</option>
+                                                <option value="saab">audio</option>
+                                                <option value="saab">speakers</option>
+                                                <option value="saab">amplifires</option>
+                                            </optgroup>
+                                            <optgroup label="Fashion">
+                                                <option value="mercedes">Womens tops</option>
+                                                <option value="audi">Jeans</option>
+                                                <option value="audi">Shirt</option>
+                                                <option value="audi">Pant</option>
+                                                <option value="audi">Watch</option>
+                                                <option value="audi">Handbag</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+                                </div>
+                                <input type="text" class="top-cat-field" placeholder="Search entire store here">
+                                <input type="button" class="top-search-btn" value="Search">
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-8 col-12 col-sm-8 order-lg-last">
+                        <div class="mini-cart-option">
+                            <ul>
+                                <li class="compare">
+                                    <a class="ha-toggle" href="compare.html"><span class="lnr lnr-sync"></span>Product compare</a>
+                                </li>
+                                <li class="wishlist">
+                                    <a class="ha-toggle" href="wishlist.html"><span class="lnr lnr-heart"></span><span class="count">1</span>wishlist</a>
+                                </li>
+                                <li class="my-cart">
+                                    <button type="button" class="ha-toggle"><span class="lnr lnr-cart"></span><span class="count">2</span>my cart</button>
+                                    <ul class="mini-cart-drop-down ha-dropdown">
+                                        <li class="mb-30">
+                                            <div class="cart-img">
+                                                <a href="product-details.html"><img alt="" src="assets/img/cart/cart-1.jpg"></a>
+                                            </div>
+                                            <div class="cart-info">
+                                                <h4><a href="product-details.html">Koss Porta Pro On Ear  Headphones </a></h4>
+                                                <span> <span>1 x </span>£165.00</span>
+                                            </div>
+                                            <div class="del-icon">
+                                                <i class="fa fa-times-circle"></i>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="subtotal-text">Sub-total: </div>
+                                            <div class="subtotal-price">£48.94</div>
+                                        </li>
+                                        <li>
+                                            <div class="subtotal-text">Eco Tax (-2.00): </div>
+                                            <div class="subtotal-price">£1.51</div>
+                                        </li>
+                                        <li>
+                                            <div class="subtotal-text">Vat (20%): </div>
+                                            <div class="subtotal-price">£9.79</div>
+                                        </li>
+                                        <li>
+                                            <div class="subtotal-text">Total: </div>
+                                            <div class="subtotal-price"><span>£60.24</span></div>
+                                        </li>
+                                        <li class="mt-30">
+                                            <a class="cart-button" href="cart.html">view cart</a>
+                                        </li>
+                                        <li>
+                                            <a class="cart-button" href="checkout.html">checkout</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-top-menu theme-bg sticker">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="top-main-menu">
+                            <div class="categories-menu-bar">
+                                <div class="categories-menu-btn ha-toggle">
+                                    <div class="left">
+                                        <i class="lnr lnr-text-align-left"></i>
+                                        <span>Browse categories</span>
+                                    </div>
+                                    <div class="right">
+                                        <i class="lnr lnr-chevron-down"></i>
+                                    </div>
+                                </div>
+                                <nav class="categorie-menus ha-dropdown">
+                                    <ul id="menu2">
+                                        <li><a href="shop-grid-left-sidebar.html">Audio & Home Theater <span class="lnr lnr-chevron-right"></span></a>
+                                            <ul class="cat-submenu">
+                                                <li><a href="shop-grid-left-sidebar.html">Home Audio <span class="lnr lnr-chevron-right"></span></a>
+                                                    <ul class="cat-submenu">
+                                                        <li><a href="shop-grid-left-sidebar.html">CD Players & Turntables</a></li>
+                                                        <li><a href="shop-grid-left-sidebar.html">Home Theater Systems</a></li>
+                                                        <li><a href="shop-grid-left-sidebar.html">Receivers & Amplifiers</a></li>
+                                                        <li><a href="shop-grid-left-sidebar.html">Speakers</a></li>
+                                                        <li><a href="shop-grid-left-sidebar.html">Wireless  Audio</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="shop-grid-left-sidebar.html">Blu-ray Disc Players</a></li>
+                                                <li><a href="shop-grid-left-sidebar.html">Curved TVs<span class="lnr lnr-chevron-right"></span></a>
+                                                    <ul class="cat-submenu">
+                                                        <li><a href="shop-grid-left-sidebar.html">CD Players & Turntables</a></li>
+                                                        <li><a href="shop-grid-left-sidebar.html">Home Theater Systems</a></li>
+                                                        <li><a href="shop-grid-left-sidebar.html">Receivers & Amplifiers</a></li>
+                                                        <li><a href="shop-grid-left-sidebar.html">Speakers</a></li>
+                                                        <li><a href="shop-grid-left-sidebar.html">Wireless  Audio</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li><a href="shop-grid-left-sidebar.html">Streaming Media Players</a></li>
+                                                <li><a href="shop-grid-left-sidebar.html">OLED TVs</a></li>
+                                                <li><a href="shop-grid-left-sidebar.html">LED & LCD TVs</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <div class="main-menu">
+                                <nav id="mobile-menu">
+                                    <ul>
+                                        <li><a href="index.html">HOME</a></li>
+                                        <li><a href="shop-grid-left-sidebar-4-column.html">SHOP</a></li>
+                                        <li><a href="blog-full-5-column.html">BLOG</a></li>
+                                        <li><a href="about.html">GIỚI THIỆU</a></li>
+                                        <li><a href="contact-us.html">LIÊN HỆ</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                            <div class="header-call-action">
+                                <p><span class="lnr lnr-phone"></span>Hotline : <strong>1-001-234-5678</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 d-block d-lg-none"><div class="mobile-menu"></div></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="breadcrumb-area mb-30">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="breadcrumb-wrap">
+                        <nav aria-label="breadcrumb">
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Giới thiệu</li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main>
+        <section class="pt-30 pb-10">
+            <div class="container-fluid">
+                <div class="about-hero">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <h1>Giới thiệu dự án thương mại điện tử</h1>
+                            <p>
+                                Trang giới thiệu được thiết kế lại theo phong cách hiện đại để phù hợp báo cáo đồ án.
+                                Đây là phiên bản tối ưu từ template Sinrato, tập trung vào mục tiêu, tính năng và luồng mua hàng.
+                            </p>
+                        </div>
+                        <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                            <a href="shop-grid-left-sidebar-4-column.html" class="about-action-btn">Đến trang Shop</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-lg-6 mb-30">
+                        <img src="assets/img/banner/img1-top-sinrato1.jpg" alt="about-project" class="img-fluid w-100">
+                    </div>
+                    <div class="col-lg-6 mb-30">
+                        <div class="section-title">
+                            <h2>Về đồ án của nhóm</h2>
+                        </div>
+                        <p>
+                            Website này được phát triển từ template Sinrato và tối ưu lại theo hướng đồ án
+                            thương mại điện tử. Mục tiêu chính là xây dựng luồng mua sắm đầy đủ:
+                            Home - Shop - Product Detail - Cart - Checkout.
+                        </p>
+                        <p>
+                            Chúng tôi tập trung vào trải nghiệm người dùng, giao diện responsive, bố cục rõ ràng,
+                            và dễ dàng mở rộng khi kết nối dữ liệu thật ở giai đoạn tiếp theo.
+                        </p>
+                        <a href="shop-grid-left-sidebar-4-column.html" class="about-action-btn">Khám phá sản phẩm</a>
+                        <a href="blog-full-5-column.html" class="about-action-btn" style="margin-left: 10px;">Xem Blog</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pb-30">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6 col-lg-3 mb-30">
+                        <div class="about-metric">
+                            <h3>05</h3>
+                            <p>Trang chính</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-30">
+                        <div class="about-metric">
+                            <h3>01</h3>
+                            <p>Luồng mua hàng</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-30">
+                        <div class="about-metric">
+                            <h3>100%</h3>
+                            <p>Giao diện responsive</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-30">
+                        <div class="about-metric">
+                            <h3>24/7</h3>
+                            <p>Sẵn sàng hỗ trợ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="banner-statics pb-30">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 mb-30">
+                        <div class="single-banner-statics">
+                            <img src="assets/img/banner/img1-middle-sinrato1.jpg" alt="project-goal">
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 mb-30">
+                        <div class="single-banner-statics">
+                            <img src="assets/img/banner/img2-middle-sinrato1.jpg" alt="project-flow">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pb-40">
+            <div class="container-fluid">
+                <div class="about-timeline">
+                    <h3 class="mb-3">Lộ trình phát triển</h3>
+                    <ul>
+                        <li><strong>Giai đoạn 1:</strong> Hoàn thiện tích hợp giao diện từ template.</li>
+                        <li><strong>Giai đoạn 2:</strong> Kết nối dữ liệu sản phẩm và bộ lọc danh mục.</li>
+                        <li><strong>Giai đoạn 3:</strong> Hoàn thiện giỏ hàng, thanh toán và quản lý đơn.</li>
+                        <li><strong>Giai đoạn 4:</strong> Kiểm thử tổng thể, tối ưu và triển khai.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="feature-style-one pt-20 pb-30">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="feature-inner fix">
+                            <div class="col">
+                                <div class="feature-item">
+                                    <div class="feature-icon">
+                                        <img src="assets/img/icon/wrapper1.png" alt="shipping">
+                                    </div>
+                                    <div class="feature-content">
+                                        <h4>Điều hướng nhanh</h4>
+                                        <p>Điều hướng rõ ràng giữa các trang chính.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="feature-item">
+                                    <div class="feature-icon">
+                                        <img src="assets/img/icon/wrapper2.png" alt="responsive">
+                                    </div>
+                                    <div class="feature-content">
+                                        <h4>Thiết kế responsive</h4>
+                                        <p>Tối ưu hiển thị trên desktop và mobile.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="feature-item">
+                                    <div class="feature-icon">
+                                        <img src="assets/img/icon/wrapper3.png" alt="modules">
+                                    </div>
+                                    <div class="feature-content">
+                                        <h4>Trang tách module</h4>
+                                        <p>Tách trang theo Home, Shop, Blog, About.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="feature-item">
+                                    <div class="feature-icon">
+                                        <img src="assets/img/icon/wrapper4.png" alt="extendable">
+                                    </div>
+                                    <div class="feature-content">
+                                        <h4>Dễ mở rộng</h4>
+                                        <p>Sẵn sàng kết nối database và backend.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="feature-item">
+                                    <div class="feature-icon">
+                                        <img src="assets/img/icon/wrapper5.png" alt="ready">
+                                    </div>
+                                    <div class="feature-content">
+                                        <h4>Sẵn sàng demo</h4>
+                                        <p>Phù hợp để demo và báo cáo đồ án.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pb-40">
+            <div class="container-fluid">
+                <div class="row align-items-stretch">
+                    <div class="col-lg-5 mb-30">
+                        <div class="about-highlight h-100">
+                            <h3 class="mb-15">Điểm nổi bật của dự án</h3>
+                            <p class="mb-2">- Màu sắc và bố cục được tối ưu để demo trước hội đồng.</p>
+                            <p class="mb-2">- Các trang chính liên kết rõ ràng, dễ trình bày luồng người dùng.</p>
+                            <p class="mb-2">- Code tổ chức theo MVC, sẵn sàng mở rộng backend.</p>
+                            <p class="mb-0">- Nội dung About thể hiện đúng tinh chất đồ án tốt nghiệp.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-7 mb-30">
+                        <div class="row">
+                            <div class="col-md-4 mb-20">
+                                <div class="about-team-card">
+                                    <div class="about-team-avatar">A</div>
+                                    <h5 class="mb-1">Thành viên 01</h5>
+                                    <p class="mb-0">Frontend & giao diện</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-20">
+                                <div class="about-team-card">
+                                    <div class="about-team-avatar">B</div>
+                                    <h5 class="mb-1">Thành viên 02</h5>
+                                    <p class="mb-0">Backend & API</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-20">
+                                <div class="about-team-card">
+                                    <div class="about-team-avatar">C</div>
+                                    <h5 class="mb-1">Thành viên 03</h5>
+                                    <p class="mb-0">Kiểm thử & tài liệu</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <a href="index.html" class="about-action-btn">Về trang chủ</a>
+                            <a href="contact-us.html" class="about-action-btn" style="margin-left: 10px;">Liên hệ ngay</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pt-10 pb-40">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="img-container fix text-center" style="padding: 40px 20px; background: #f7f7f7;">
+                            <h3 class="mb-15">Định hướng phát triển tiếp theo</h3>
+                            <p class="mb-25">
+                                Hoàn thiện đăng nhập, quản lý tài khoản, xử lý đơn hàng và kết nối dữ liệu thực tế.
+                            </p>
+                            <a class="about-action-btn" href="contact-us.html">Liên hệ</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-top pt-50 pb-50">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="footer-single-widget">
+                            <div class="footer-logo mb-20">
+                                <a href="index.html"><img src="assets/img/logo/logo-sinrato2.png" alt="footer-logo"></a>
+                            </div>
+                            <p>Dự án thương mại điện tử được phát triển từ template Sinrato phục vụ đồ án môn học.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <div class="footer-single-widget">
+                            <h5>Trang thông tin</h5>
+                            <ul class="footer-useful-link">
+                                <li><a href="about.html">Giới thiệu</a></li>
+                                <li><a href="shop-grid-left-sidebar-4-column.html">Shop</a></li>
+                                <li><a href="blog-full-5-column.html">Blog</a></li>
+                                <li><a href="contact-us.html">Liên hệ</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-single-widget">
+                            <h5>Hỗ trợ khách hàng</h5>
+                            <ul class="footer-useful-link">
+                                <li><a href="cart.html">Cart</a></li>
+                                <li><a href="checkout.html">Checkout</a></li>
+                                <li><a href="wishlist.html">Wishlist</a></li>
+                                <li><a href="compare.html">Compare</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-single-widget">
+                            <h5>Thông tin liên hệ</h5>
+                            <p>Địa chỉ: 123 Demo Street</p>
+                            <p>Điện thoại: 1-001-234-5678</p>
+                            <p>Email: support@sinrato.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="footer-bottom-content">
+                            <div class="footer-copyright">
+                                <p>Copyright &copy; 2026. Đồ án thương mại điện tử.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/vendor/jquery-1.12.4.min.js"></script>
+    <script src="assets/js/bootstrap.min.js"></script>
+    <script src="assets/js/plugins.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
+
+

@@ -1,0 +1,148 @@
+@model WishlistPageViewModel
+
+@{
+    ViewData["Title"] = "Yêu thích";
+    var returnUrl = $"{Context.Request.Path}{Context.Request.QueryString}";
+
+    static decimal FinalPrice(Product product)
+    {
+        var discount = product.Discount ?? 0m;
+        return discount > 0m ? product.Price * (1m - (discount / 100m)) : product.Price;
+    }
+
+    static string PrimaryImage(Product product)
+    {
+        var imageUrl = product.ProductImages
+            .Where(image => !string.IsNullOrWhiteSpace(image.ImageUrl))
+            .OrderByDescending(image => image.IsMain ?? false)
+            .Select(image => image.ImageUrl!.Trim())
+            .FirstOrDefault();
+
+        if (!string.IsNullOrWhiteSpace(imageUrl))
+        {
+            return imageUrl;
+        }
+
+        return string.IsNullOrWhiteSpace(product.Thumbnail)
+            ? "~/assets/img/product/product-1.jpg"
+            : product.Thumbnail.Trim();
+    }
+}
+
+<div class="breadcrumb-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-wrap">
+                    <nav aria-label="breadcrumb">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Yêu thích</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="wishlist-wrapper mb-55">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <main id="primary" class="site-main">
+                    <div class="wishlist surface-panel">
+                        <div class="section-title mb-25">
+                            <h3>Sản phẩm yêu thích</h3>
+                        </div>
+
+                        @if (Model.Products.Count == 0)
+                        {
+                            <div class="alert alert-info mb-0">
+                                Danh sách yêu thích đang trống. Hãy thêm sản phẩm bạn quan tâm để tiện theo dõi sau.
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive text-center wishlist-style">
+                                <table class="table table-bordered align-middle cart-table-enhanced">
+                                    <thead>
+                                        <tr>
+                                            <th>Ảnh</th>
+                                            <th>Sản phẩm</th>
+                                            <th>Tình trạng</th>
+                                            <th>Giá bán</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var product in Model.Products)
+                                        {
+                                            var productUrl = Url.Action("Product", "Shop", new { id = product.ProductId });
+                                            var finalPrice = FinalPrice(product);
+                                            var inStock = (product.Stock ?? 0) > 0;
+
+                                            <tr>
+                                                <td class="cart-image-cell">
+                                                    <a href="@productUrl">
+                                                        <img src="@Url.Content(PrimaryImage(product))" alt="@product.Name" class="img-thumbnail cart-table-image">
+                                                    </a>
+                                                </td>
+                                                <td class="text-start">
+                                                    <a href="@productUrl" class="table-product-link">@product.Name</a>
+                                                    <div class="table-product-meta">Danh mục: @(product.Category?.CategoryName ?? "Đang cập nhật")</div>
+                                                    <div class="table-product-meta">Thương hiệu: @(string.IsNullOrWhiteSpace(product.Brand) ? "Đang cập nhật" : product.Brand)</div>
+                                                </td>
+                                                <td>
+                                                    <span class="status-pill @(inStock ? "status-success" : "status-muted")">
+                                                        @(inStock ? "Còn hàng" : "Tạm hết hàng")
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="price-box">
+                                                        <span class="regular-price">@finalPrice.ToString("#,##0") VND</span>
+                                                        @if (product.Discount.HasValue && product.Discount.Value > 0)
+                                                        {
+                                                            <span class="old-price"><del>@product.Price.ToString("#,##0") VND</del></span>
+                                                        }
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="action-form-stack">
+                                                        <form asp-action="AddToCart" asp-controller="Checkout" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="productId" value="@product.ProductId">
+                                                            <input type="hidden" name="quantity" value="1">
+                                                            <input type="hidden" name="returnUrl" value="@returnUrl">
+                                                            <button type="submit" class="btn btn-secondary" disabled="@(inStock ? null : "disabled")">Thêm vào giỏ</button>
+                                                        </form>
+                                                        <form asp-action="AddToCompare" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="productId" value="@product.ProductId">
+                                                            <input type="hidden" name="returnUrl" value="@returnUrl">
+                                                            <button type="submit" class="btn btn-outline-secondary">So sánh</button>
+                                                        </form>
+                                                        <form asp-action="RemoveFromWishlist" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="productId" value="@product.ProductId">
+                                                            <input type="hidden" name="returnUrl" value="@returnUrl">
+                                                            <button type="submit" class="btn btn-outline-danger">Xóa</button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="scroll-top not-visible">
+    <i class="fa fa-angle-up"></i>
+</div>

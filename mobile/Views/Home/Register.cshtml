@@ -1,0 +1,123 @@
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<div class="breadcrumb-area">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-wrap">
+                    <nav aria-label="breadcrumb">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Đăng ký</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="login-wrapper pb-70">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-xl-8 offset-xl-2">
+                <main id="primary" class="site-main">
+                    <div class="user-login surface-panel">
+                        <div class="section-title text-center">
+                            <h3>Tạo tài khoản mới</h3>
+                        </div>
+
+                        <div class="registration-form login-form">
+                            <form asp-action="Register" method="post">
+                                @Html.AntiForgeryToken()
+                                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                                <div class="login-info mb-20">
+                                    <p>Đã có tài khoản? <a href="@Url.Action("Login", "Account")">Đăng nhập ngay</a>.</p>
+                                </div>
+
+                                <div class="form-group mb-3 row">
+                                    <label asp-for="FullName" class="col-12 col-md-4 col-form-label">Họ và tên</label>
+                                    <div class="col-12 col-md-8">
+                                        <input asp-for="FullName" class="form-control">
+                                        <span asp-validation-for="FullName" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3 row">
+                                    <label asp-for="Username" class="col-12 col-md-4 col-form-label">Tên đăng nhập</label>
+                                    <div class="col-12 col-md-8">
+                                        <input asp-for="Username" class="form-control">
+                                        <span asp-validation-for="Username" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3 row">
+                                    <label asp-for="Email" class="col-12 col-md-4 col-form-label">Email</label>
+                                    <div class="col-12 col-md-8">
+                                        <input asp-for="Email" class="form-control">
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3 row">
+                                    <label asp-for="Phone" class="col-12 col-md-4 col-form-label">Số điện thoại</label>
+                                    <div class="col-12 col-md-8">
+                                        <input asp-for="Phone" class="form-control">
+                                        <span asp-validation-for="Phone" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3 row">
+                                    <label asp-for="Address" class="col-12 col-md-4 col-form-label">Địa chỉ</label>
+                                    <div class="col-12 col-md-8">
+                                        <input asp-for="Address" class="form-control">
+                                        <span asp-validation-for="Address" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3 row">
+                                    <label asp-for="Password" class="col-12 col-md-4 col-form-label">Mật khẩu</label>
+                                    <div class="col-12 col-md-8">
+                                        <div class="password-field-group">
+                                            <input asp-for="Password" class="form-control">
+                                            <button type="button" class="password-toggle-button" data-password-toggle="#Password" aria-label="Hiển thị mật khẩu">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3 row">
+                                    <label asp-for="ConfirmPassword" class="col-12 col-md-4 col-form-label">Xác nhận mật khẩu</label>
+                                    <div class="col-12 col-md-8">
+                                        <div class="password-field-group">
+                                            <input asp-for="ConfirmPassword" class="form-control">
+                                            <button type="button" class="password-toggle-button" data-password-toggle="#ConfirmPassword" aria-label="Hiển thị mật khẩu xác nhận">
+                                                <i class="fa fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="register-box d-flex justify-content-end mt-20">
+                                    <button type="submit" class="btn btn-secondary">Đăng ký</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="scroll-top not-visible">
+    <i class="fa fa-angle-up"></i>
+</div>
