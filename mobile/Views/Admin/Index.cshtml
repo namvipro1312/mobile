@@ -1,0 +1,279 @@
+@model AdminDashboardViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Dashboard Admin";
+    var maxTopProductUnits = Math.Max(Model.TopProducts.Select(item => item.UnitsSold).DefaultIfEmpty(1).Max(), 1);
+}
+
+<section class="admin-hero">
+    <div class="row align-items-center">
+        <div class="col-lg-8 mb-4 mb-lg-0">
+            <span class="admin-kicker">Lấy cảm hứng từ template Apex eCommerce</span>
+            <h2>Quản trị tổng quan cửa hàng bằng dữ liệu thật từ database.</h2>
+            <p>
+                Trang này gom các số liệu vận hành quan trọng: doanh thu, đơn hàng, khách hàng, tình trạng tồn kho,
+                phương thức thanh toán và các đơn mới nhất để bạn xử lý nhanh hơn.
+            </p>
+        </div>
+        <div class="col-lg-4">
+            <div class="admin-hero-card">
+                <span>Admin đang đăng nhập</span>
+                <strong>@(Model.AdminUser.FullName ?? Model.AdminUser.Username ?? "Administrator")</strong>
+                <p>Vai trò: @(string.IsNullOrWhiteSpace(Model.AdminUser.Role) ? "Admin" : Model.AdminUser.Role)</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="admin-stat-grid">
+    <article class="admin-stat-card">
+        <div class="admin-stat-icon"><i class="fa fa-line-chart"></i></div>
+        <span>Doanh thu toàn hệ thống</span>
+        <strong>@Model.GrossRevenue.ToString("#,##0") VND</strong>
+        <p>Tháng này: @Model.RevenueThisMonth.ToString("#,##0") VND</p>
+    </article>
+    <article class="admin-stat-card">
+        <div class="admin-stat-icon"><i class="fa fa-shopping-cart"></i></div>
+        <span>Đơn hàng</span>
+        <strong>@Model.OrdersTotal</strong>
+        <p>@Model.PendingOrders đơn cần theo dõi</p>
+    </article>
+    <article class="admin-stat-card">
+        <div class="admin-stat-icon"><i class="fa fa-laptop"></i></div>
+        <span>Sản phẩm đang bán</span>
+        <strong>@Model.ProductsActive</strong>
+        <p>@Model.LowStockProductsCount sản phẩm sắp hết hàng</p>
+    </article>
+    <article class="admin-stat-card">
+        <div class="admin-stat-icon"><i class="fa fa-users"></i></div>
+        <span>Khách hàng</span>
+        <strong>@Model.CustomersTotal</strong>
+        <p>Tháng này thêm @Model.NewCustomersThisMonth tài khoản</p>
+    </article>
+</section>
+
+<section class="row g-4 mb-4">
+    <div class="col-xl-8" id="admin-orders">
+        <div class="admin-panel">
+            <div class="admin-panel-heading">
+                <div>
+                    <h3>Đơn hàng gần đây</h3>
+                    <p>Theo dõi nhanh các đơn mới và trạng thái xử lý hiện tại.</p>
+                </div>
+                <div class="admin-pill">@Model.OrdersThisMonth đơn trong tháng</div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table admin-table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Khách hàng</th>
+                            <th>Thanh toán</th>
+                            <th>Ngày tạo</th>
+                            <th>Trạng thái</th>
+                            <th class="text-end">Tổng tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.RecentOrders.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-4">Chưa có đơn hàng nào trong hệ thống.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var order in Model.RecentOrders)
+                            {
+                                <tr>
+                                    <td><strong>#@order.OrderId</strong></td>
+                                    <td>@order.CustomerName</td>
+                                    <td>@order.PaymentMethod</td>
+                                    <td>@(order.CreatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "--")</td>
+                                    <td>
+                                        <span class="admin-status-chip">@order.Status</span>
+                                    </td>
+                                    <td class="text-end">@order.TotalAmount.ToString("#,##0") VND</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4" id="admin-customers">
+        <div class="admin-panel h-100">
+            <div class="admin-panel-heading">
+                <div>
+                    <h3>Tổng quan vận hành</h3>
+                    <p>Các chỉ số nhanh cần chú ý mỗi ngày.</p>
+                </div>
+            </div>
+
+            <div class="admin-mini-stats">
+                <div class="admin-mini-stat">
+                    <span>Giá trị đơn trung bình</span>
+                    <strong>@Model.AverageOrderValue.ToString("#,##0") VND</strong>
+                </div>
+                <div class="admin-mini-stat">
+                    <span>Tin nhắn liên hệ</span>
+                    <strong>@Model.ContactMessagesCount</strong>
+                </div>
+                <div class="admin-mini-stat">
+                    <span>Khách hàng mới tháng này</span>
+                    <strong>@Model.NewCustomersThisMonth</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4 mb-4">
+    <div class="col-xl-6">
+        <div class="admin-panel h-100">
+            <div class="admin-panel-heading">
+                <div>
+                    <h3>Trạng thái đơn hàng</h3>
+                    <p>Phân bổ số lượng đơn theo từng trạng thái hiện tại.</p>
+                </div>
+            </div>
+
+            <div class="admin-breakdown-list">
+                @if (Model.OrderStatusItems.Count == 0)
+                {
+                    <p class="mb-0">Chưa có dữ liệu đơn hàng.</p>
+                }
+                else
+                {
+                    foreach (var item in Model.OrderStatusItems)
+                    {
+                        <div class="admin-breakdown-item">
+                            <div class="admin-breakdown-top">
+                                <strong>@item.Label</strong>
+                                <span>@item.Count đơn</span>
+                            </div>
+                            <div class="admin-progress-track">
+                                <div class="admin-progress-bar" style="width:@item.Percentage.ToString(System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                            </div>
+                            <small>@item.Percentage.ToString("0.#")%</small>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="admin-panel h-100">
+            <div class="admin-panel-heading">
+                <div>
+                    <h3>Phương thức thanh toán</h3>
+                    <p>Dữ liệu từ bảng payment để biết khách đang ưu tiên cách thanh toán nào.</p>
+                </div>
+            </div>
+
+            <div class="admin-breakdown-list">
+                @if (Model.PaymentMethodItems.Count == 0)
+                {
+                    <p class="mb-0">Chưa có dữ liệu thanh toán.</p>
+                }
+                else
+                {
+                    foreach (var item in Model.PaymentMethodItems)
+                    {
+                        <div class="admin-breakdown-item">
+                            <div class="admin-breakdown-top">
+                                <strong>@item.Label</strong>
+                                <span>@item.Count giao dịch</span>
+                            </div>
+                            <div class="admin-progress-track admin-progress-track-alt">
+                                <div class="admin-progress-bar admin-progress-bar-alt" style="width:@item.Percentage.ToString(System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                            </div>
+                            <small>@item.Percentage.ToString("0.#")%</small>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4">
+    <div class="col-xl-6" id="admin-inventory">
+        <div class="admin-panel h-100">
+            <div class="admin-panel-heading">
+                <div>
+                    <h3>Cảnh báo tồn kho thấp</h3>
+                    <p>Ưu tiên nhập thêm hàng cho các sản phẩm sắp hết.</p>
+                </div>
+            </div>
+
+            <div class="admin-list-stack">
+                @if (Model.LowStockProducts.Count == 0)
+                {
+                    <p class="mb-0">Chưa có sản phẩm nào ở ngưỡng tồn kho thấp.</p>
+                }
+                else
+                {
+                    foreach (var product in Model.LowStockProducts)
+                    {
+                        <article class="admin-list-card">
+                            <div>
+                                <strong>@product.Name</strong>
+                                <p>@product.Brand · @product.CategoryName</p>
+                            </div>
+                            <div class="text-end">
+                                <span class="admin-stock-badge @(product.Stock <= 2 ? "is-danger" : string.Empty)">Còn @product.Stock</span>
+                                <small>@product.FinalPrice.ToString("#,##0") VND</small>
+                            </div>
+                        </article>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="admin-panel h-100">
+            <div class="admin-panel-heading">
+                <div>
+                    <h3>Sản phẩm bán tốt</h3>
+                    <p>Xác định nhóm hàng kéo doanh thu để đẩy hiển thị hoặc bổ sung hàng.</p>
+                </div>
+            </div>
+
+            <div class="admin-ranking-list">
+                @if (Model.TopProducts.Count == 0)
+                {
+                    <p class="mb-0">Chưa có dữ liệu bán hàng để xếp hạng sản phẩm.</p>
+                }
+                else
+                {
+                    foreach (var product in Model.TopProducts)
+                    {
+                        var width = decimal.Round((decimal)product.UnitsSold * 100m / maxTopProductUnits, 1, MidpointRounding.AwayFromZero);
+
+                        <article class="admin-ranking-item">
+                            <div class="admin-ranking-header">
+                                <div>
+                                    <strong>@product.Name</strong>
+                                    <p>@product.Brand</p>
+                                </div>
+                                <div class="text-end">
+                                    <span>@product.UnitsSold lượt bán</span>
+                                    <small>@product.Revenue.ToString("#,##0") VND</small>
+                                </div>
+                            </div>
+                            <div class="admin-progress-track">
+                                <div class="admin-progress-bar" style="width:@width.ToString(System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                            </div>
+                        </article>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>

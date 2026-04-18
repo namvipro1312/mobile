@@ -169,6 +169,10 @@
                                         else
                                         {
                                             <li><a href="@Url.Action("MyAccount", "Account")">Xin chào, @(currentUser.FullName ?? currentUser.Username)</a></li>
+                                            @if (string.Equals(currentUser.Role, "Admin", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <li><a href="@Url.Action("Index", "Admin")">Quản trị</a></li>
+                                            }
                                             <li>
                                                 <form asp-controller="Account" asp-action="Logout" method="post">
                                                     <button type="submit" class="header-inline-button">Đăng xuất</button>

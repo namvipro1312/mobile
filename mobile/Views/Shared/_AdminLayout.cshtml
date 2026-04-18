@@ -1,0 +1,90 @@
+@using Microsoft.AspNetCore.Http
+@using Microsoft.EntityFrameworkCore
+@inject MobileContext Db
+
+@{
+    var currentUserId = Context.Session.GetInt32("CurrentUserId");
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty;
+    var currentAdmin = currentUserId.HasValue
+        ? await Db.Users.AsNoTracking().FirstOrDefaultAsync(item => item.UserId == currentUserId.Value)
+        : null;
+
+    bool IsCurrentPage(string controller, string action) =>
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase) &&
+        string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase);
+}
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Admin</title>
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/assets/css/admin.css">
+</head>
+<body class="admin-shell-body">
+    <div class="admin-shell">
+        <aside class="admin-sidebar">
+            <a href="@Url.Action("Index", "Admin")" class="admin-brand">
+                <span class="admin-brand-mark"><i class="fa fa-bolt"></i></span>
+                <span>
+                    <strong>Mobile Admin</strong>
+                    <small>Bảng điều khiển</small>
+                </span>
+            </a>
+
+            <nav class="admin-nav">
+                <span class="admin-nav-title">Điều hướng</span>
+                <a class="@(IsCurrentPage("Admin", "Index") ? "is-active" : string.Empty)" href="@Url.Action("Index", "Admin")">
+                    <i class="fa fa-dashboard"></i>
+                    <span>Tổng quan</span>
+                </a>
+                <a href="#admin-orders">
+                    <i class="fa fa-shopping-bag"></i>
+                    <span>Đơn hàng</span>
+                </a>
+                <a href="#admin-inventory">
+                    <i class="fa fa-cubes"></i>
+                    <span>Tồn kho</span>
+                </a>
+                <a href="#admin-customers">
+                    <i class="fa fa-users"></i>
+                    <span>Khách hàng</span>
+                </a>
+                <a href="@Url.Action("Index", "Home")">
+                    <i class="fa fa-globe"></i>
+                    <span>Về storefront</span>
+                </a>
+            </nav>
+
+            <div class="admin-sidebar-card">
+                <span class="admin-sidebar-card-label">Tài khoản hiện tại</span>
+                <strong>@(currentAdmin?.FullName ?? currentAdmin?.Username ?? "Admin")</strong>
+                <p>@(currentAdmin?.Email ?? "Chưa cập nhật email")</p>
+            </div>
+        </aside>
+
+        <div class="admin-main">
+            <header class="admin-topbar">
+                <div>
+                    <p class="admin-topbar-kicker">Khu vực quản trị</p>
+                    <h1>@ViewData["Title"]</h1>
+                </div>
+                <div class="admin-topbar-actions">
+                    <a href="@Url.Action("MyAccount", "Account")" class="admin-ghost-button">Tài khoản</a>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="admin-primary-button">Đăng xuất</button>
+                    </form>
+                </div>
+            </header>
+
+            <main class="admin-content">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+</body>
+</html>
