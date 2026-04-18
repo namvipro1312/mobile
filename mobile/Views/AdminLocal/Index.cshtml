@@ -1,0 +1,25 @@
+@{
+    ViewData["Title"] = "Admin Local";
+    var adminUser = ViewData["AdminLocalUser"]?.ToString() ?? "admin";
+    Layout = "~/Views/Shared/_AdminLocalLayout.cshtml";
+}
+
+<section class="py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="h3 mb-1">Admin local</h1>
+            <p class="text-muted mb-0">Xin chao <strong>@adminUser</strong>. Day la khu admin test trong cung project.</p>
+        </div>
+        <form asp-controller="AdminLocal" asp-action="Logout" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-outline-danger">Dang xuat</button>
+        </form>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <p class="mb-2">Ban co the test giao dien/flow tai day truoc.</p>
+            <p class="mb-0">Khi san sang, vao <a href="/Admin">/Admin</a> de noi voi luong dang nhap va du lieu chinh.</p>
+        </div>
+    </div>
+</section>
