@@ -15,75 +15,230 @@
         string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase);
 }
 <!doctype html>
-<html lang="vi">
+<html lang="en" class="density-comfortable layout-sidebar container-fluid dir-ltr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@ViewData["Title"] - Admin</title>
-    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="~/assets/css/font-awesome.min.css">
-    <link rel="stylesheet" href="~/assets/css/admin.css">
+    <title>@ViewData["Title"] - Apex Admin</title>
+    <link rel="icon" href="~/admin-template/faviconfe84.ico" type="image/x-icon" sizes="16x16" />
+    <link rel="stylesheet" href="~/admin-template/_next/static/css/d13c00c6a1dc94c1.css" />
+    <link rel="stylesheet" href="~/admin-template/_next/static/css/7630fa60d43bc47c.css" />
+    <style>
+        .admin-template-sidebar {
+            left: 0;
+            width: 260px;
+        }
+
+        .admin-template-main {
+            min-width: 0;
+            width: 100%;
+        }
+
+        .grid-cols-1 {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        @@media (min-width: 640px) {
+            .sm\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .sm\:flex-row {
+                flex-direction: row;
+            }
+
+            .sm\:items-center {
+                align-items: center;
+            }
+
+            .sm\:items-start {
+                align-items: flex-start;
+            }
+
+            .sm\:justify-between {
+                justify-content: space-between;
+            }
+
+            .sm\:text-right {
+                text-align: right;
+            }
+        }
+
+        @@media (min-width: 768px) {
+            .md\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .md\:grid-cols-\[1fr_220px_auto\] {
+                grid-template-columns: 1fr 220px auto;
+            }
+        }
+
+        @@media (min-width: 1024px) {
+            .admin-template-main {
+                margin-left: 260px;
+                width: calc(100% - 260px);
+            }
+        }
+
+        @@media (min-width: 1280px) {
+            .xl\:grid-cols-4 {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+
+            .xl\:grid-cols-12 {
+                grid-template-columns: repeat(12, minmax(0, 1fr));
+            }
+
+            .xl\:col-span-4 {
+                grid-column: span 4 / span 4;
+            }
+
+            .xl\:col-span-6 {
+                grid-column: span 6 / span 6;
+            }
+
+            .xl\:col-span-8 {
+                grid-column: span 8 / span 8;
+            }
+
+            .xl\:flex-row {
+                flex-direction: row;
+            }
+
+            .xl\:items-end {
+                align-items: flex-end;
+            }
+
+            .xl\:justify-between {
+                justify-content: space-between;
+            }
+        }
+    </style>
 </head>
-<body class="admin-shell-body">
-    <div class="admin-shell">
-        <aside class="admin-sidebar">
-            <a href="@Url.Action("Index", "Admin")" class="admin-brand">
-                <span class="admin-brand-mark"><i class="fa fa-bolt"></i></span>
-                <span>
-                    <strong>Mobile Admin</strong>
-                    <small>Bảng điều khiển</small>
-                </span>
-            </a>
+<body class="antialiased">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:outline-none">Bỏ qua menu</a>
 
-            <nav class="admin-nav">
-                <span class="admin-nav-title">Điều hướng</span>
-                <a class="@(IsCurrentPage("Admin", "Index") ? "is-active" : string.Empty)" href="@Url.Action("Index", "Admin")">
-                    <i class="fa fa-dashboard"></i>
-                    <span>Tổng quan</span>
-                </a>
-                <a href="#admin-orders">
-                    <i class="fa fa-shopping-bag"></i>
-                    <span>Đơn hàng</span>
-                </a>
-                <a href="#admin-inventory">
-                    <i class="fa fa-cubes"></i>
-                    <span>Tồn kho</span>
-                </a>
-                <a href="#admin-customers">
-                    <i class="fa fa-users"></i>
-                    <span>Khách hàng</span>
-                </a>
-                <a href="@Url.Action("Index", "Home")">
-                    <i class="fa fa-globe"></i>
-                    <span>Về storefront</span>
-                </a>
-            </nav>
+    <div class="min-h-screen bg-background">
+        <div class="flex min-h-screen">
+            <aside class="admin-template-sidebar fixed top-0 z-40 hidden h-screen flex-col bg-sidebar lg:flex">
+                <div class="flex h-16 items-center gap-3 border-b border-sidebar-border px-4">
+                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 text-sidebar-primary-foreground" aria-hidden="true">
+                            <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-bold tracking-tight text-sidebar-foreground">Apex Mobile</span>
+                        <span class="text-[10px] font-medium uppercase tracking-widest text-sidebar-foreground/40">Quản trị</span>
+                    </div>
+                </div>
 
-            <div class="admin-sidebar-card">
-                <span class="admin-sidebar-card-label">Tài khoản hiện tại</span>
-                <strong>@(currentAdmin?.FullName ?? currentAdmin?.Username ?? "Admin")</strong>
-                <p>@(currentAdmin?.Email ?? "Chưa cập nhật email")</p>
+                <nav class="flex-1 space-y-3 overflow-y-auto px-3 py-4" aria-label="Main navigation">
+                    <div>
+                        <button class="flex w-full items-center gap-2 rounded-md px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/30">
+                            <span class="flex-1 text-start">Tổng quan</span>
+                        </button>
+                        <div class="mt-1 space-y-0.5">
+                            <a class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 @(IsCurrentPage("Admin", "Index") ? "bg-sidebar-accent text-sidebar-primary" : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground")" href="@Url.Action("Index", "Admin")">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-[18px] w-[18px] shrink-0 @(IsCurrentPage("Admin", "Index") ? "text-sidebar-primary" : "text-sidebar-foreground/50 group-hover:text-sidebar-foreground/80")" aria-hidden="true">
+                                    <rect width="7" height="9" x="3" y="3" rx="1"></rect>
+                                    <rect width="7" height="5" x="14" y="3" rx="1"></rect>
+                                    <rect width="7" height="9" x="14" y="12" rx="1"></rect>
+                                    <rect width="7" height="5" x="3" y="16" rx="1"></rect>
+                                </svg>
+                                <span class="flex-1">Bảng điều khiển</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button class="flex w-full items-center gap-2 rounded-md px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/30">
+                            <span class="flex-1 text-start">Bán hàng</span>
+                        </button>
+                        <div class="mt-1 space-y-0.5">
+                            <a class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-sidebar-foreground/70 transition-all duration-200 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground" href="#admin-orders">
+                                <span class="flex-1">Đơn hàng</span>
+                            </a>
+                            <a class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 @(IsCurrentPage("Admin", "Products") || IsCurrentPage("Admin", "CreateProduct") || IsCurrentPage("Admin", "EditProduct") ? "bg-sidebar-accent text-sidebar-primary" : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground")" href="@Url.Action("Products", "Admin")">
+                                <span class="flex-1">Sản phẩm</span>
+                            </a>
+                            <a class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-sidebar-foreground/70 transition-all duration-200 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground" href="#admin-customers">
+                                <span class="flex-1">Khách hàng</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button class="flex w-full items-center gap-2 rounded-md px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-sidebar-foreground/30">
+                            <span class="flex-1 text-start">Tài khoản</span>
+                        </button>
+                        <div class="mt-1 space-y-0.5">
+                            <a class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-sidebar-foreground/70 transition-all duration-200 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground" href="@Url.Action("MyAccount", "Account")">
+                                <span class="flex-1">Tài khoản của tôi</span>
+                            </a>
+                            <a class="group relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-sidebar-foreground/70 transition-all duration-200 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground" href="@Url.Action("Index", "Home")">
+                                <span class="flex-1">Trang bán hàng</span>
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="border-t border-sidebar-border p-3">
+                    <div class="flex items-center gap-2 rounded-lg px-2 py-2">
+                        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-sidebar-primary/80 to-sidebar-primary text-[11px] font-bold text-sidebar-primary-foreground">
+                            @((currentAdmin?.FullName ?? currentAdmin?.Username ?? "AD")[..Math.Min((currentAdmin?.FullName ?? currentAdmin?.Username ?? "AD").Length, 2)].ToUpperInvariant())
+                        </div>
+                        <div class="flex flex-1 flex-col">
+                            <span class="text-sm font-medium text-sidebar-foreground">@(currentAdmin?.FullName ?? currentAdmin?.Username ?? "Admin")</span>
+                            <span class="text-[11px] text-sidebar-foreground/50">@(currentAdmin?.Role ?? "Admin")</span>
+                        </div>
+                        <form asp-controller="Account" asp-action="Logout" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" aria-label="Đăng xuất" class="rounded-md p-1.5 text-sidebar-foreground/40 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground/70">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4" aria-hidden="true">
+                                    <path d="m16 17 5-5-5-5"></path>
+                                    <path d="M21 12H9"></path>
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="admin-template-main flex min-h-screen flex-1 flex-col">
+                <header class="sticky top-0 z-30 border-b border-border/60 bg-background/95 backdrop-blur">
+                    <div class="flex min-h-16 items-center justify-between gap-3 px-4 sm:px-6">
+                        <div>
+                            <p class="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Khu quản trị</p>
+                            <h1 class="text-lg font-semibold tracking-tight text-foreground">@ViewData["Title"]</h1>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <a href="@Url.Action("MyAccount", "Account")" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md border bg-background px-4 py-2 text-sm font-medium shadow-xs transition-all hover:bg-accent hover:text-accent-foreground">Tài khoản</a>
+                            <a href="@Url.Action("Index", "Home")" class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90">Mở cửa hàng</a>
+                        </div>
+                    </div>
+                </header>
+
+                <main id="main-content" class="flex-1 px-4 py-6 sm:px-6">
+                    @if (TempData["SuccessMessage"] is string success && !string.IsNullOrWhiteSpace(success))
+                    {
+                        <div class="mb-4 rounded-xl border border-emerald-300/40 bg-emerald-100/60 px-4 py-3 text-sm font-medium text-emerald-700">@success</div>
+                    }
+
+                    @if (TempData["ErrorMessage"] is string error && !string.IsNullOrWhiteSpace(error))
+                    {
+                        <div class="mb-4 rounded-xl border border-rose-300/40 bg-rose-100/60 px-4 py-3 text-sm font-medium text-rose-700">@error</div>
+                    }
+
+                    @RenderBody()
+                </main>
             </div>
-        </aside>
-
-        <div class="admin-main">
-            <header class="admin-topbar">
-                <div>
-                    <p class="admin-topbar-kicker">Khu vực quản trị</p>
-                    <h1>@ViewData["Title"]</h1>
-                </div>
-                <div class="admin-topbar-actions">
-                    <a href="@Url.Action("MyAccount", "Account")" class="admin-ghost-button">Tài khoản</a>
-                    <form asp-controller="Account" asp-action="Logout" method="post">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="admin-primary-button">Đăng xuất</button>
-                    </form>
-                </div>
-            </header>
-
-            <main class="admin-content">
-                @RenderBody()
-            </main>
         </div>
     </div>
 </body>

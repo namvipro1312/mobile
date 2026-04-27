@@ -1,279 +1,294 @@
 @model AdminDashboardViewModel
 @{
     Layout = "_AdminLayout";
-    ViewData["Title"] = "Dashboard Admin";
+    ViewData["Title"] = "Bảng điều khiển Admin";
     var maxTopProductUnits = Math.Max(Model.TopProducts.Select(item => item.UnitsSold).DefaultIfEmpty(1).Max(), 1);
 }
 
-<section class="admin-hero">
-    <div class="row align-items-center">
-        <div class="col-lg-8 mb-4 mb-lg-0">
-            <span class="admin-kicker">Lấy cảm hứng từ template Apex eCommerce</span>
-            <h2>Quản trị tổng quan cửa hàng bằng dữ liệu thật từ database.</h2>
-            <p>
-                Trang này gom các số liệu vận hành quan trọng: doanh thu, đơn hàng, khách hàng, tình trạng tồn kho,
-                phương thức thanh toán và các đơn mới nhất để bạn xử lý nhanh hơn.
-            </p>
-        </div>
-        <div class="col-lg-4">
-            <div class="admin-hero-card">
-                <span>Admin đang đăng nhập</span>
-                <strong>@(Model.AdminUser.FullName ?? Model.AdminUser.Username ?? "Administrator")</strong>
-                <p>Vai trò: @(string.IsNullOrWhiteSpace(Model.AdminUser.Role) ? "Admin" : Model.AdminUser.Role)</p>
+<div class="space-y-6">
+    <section class="rounded-2xl border border-border bg-card p-6 shadow-xs">
+        <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+            <div class="xl:col-span-8">
+                <span class="inline-flex rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary">Tổng quan vận hành</span>
+                <h2 class="mt-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">Dashboard admin dùng template Apex và dữ liệu thật của cửa hàng.</h2>
+                <p class="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+                    Doanh thu, đơn hàng, thanh toán, khách hàng và tồn kho được gom về một màn hình để theo dõi nhanh.
+                </p>
             </div>
-        </div>
-    </div>
-</section>
+            <div class="xl:col-span-4">
+                <div class="rounded-2xl border border-sidebar-border bg-sidebar p-5 text-sidebar-foreground shadow-sm">
+                    <p class="text-[11px] font-semibold uppercase tracking-widest text-sidebar-foreground/50">Admin đang đăng nhập</p>
+                    <h3 class="mt-3 text-xl font-semibold text-white">@(Model.AdminUser.FullName ?? Model.AdminUser.Username ?? "Administrator")</h3>
+                    <p class="mt-1 text-sm text-sidebar-foreground/70">Role: @(string.IsNullOrWhiteSpace(Model.AdminUser.Role) ? "Admin" : Model.AdminUser.Role)</p>
 
-<section class="admin-stat-grid">
-    <article class="admin-stat-card">
-        <div class="admin-stat-icon"><i class="fa fa-line-chart"></i></div>
-        <span>Doanh thu toàn hệ thống</span>
-        <strong>@Model.GrossRevenue.ToString("#,##0") VND</strong>
-        <p>Tháng này: @Model.RevenueThisMonth.ToString("#,##0") VND</p>
-    </article>
-    <article class="admin-stat-card">
-        <div class="admin-stat-icon"><i class="fa fa-shopping-cart"></i></div>
-        <span>Đơn hàng</span>
-        <strong>@Model.OrdersTotal</strong>
-        <p>@Model.PendingOrders đơn cần theo dõi</p>
-    </article>
-    <article class="admin-stat-card">
-        <div class="admin-stat-icon"><i class="fa fa-laptop"></i></div>
-        <span>Sản phẩm đang bán</span>
-        <strong>@Model.ProductsActive</strong>
-        <p>@Model.LowStockProductsCount sản phẩm sắp hết hàng</p>
-    </article>
-    <article class="admin-stat-card">
-        <div class="admin-stat-icon"><i class="fa fa-users"></i></div>
-        <span>Khách hàng</span>
-        <strong>@Model.CustomersTotal</strong>
-        <p>Tháng này thêm @Model.NewCustomersThisMonth tài khoản</p>
-    </article>
-</section>
-
-<section class="row g-4 mb-4">
-    <div class="col-xl-8" id="admin-orders">
-        <div class="admin-panel">
-            <div class="admin-panel-heading">
-                <div>
-                    <h3>Đơn hàng gần đây</h3>
-                    <p>Theo dõi nhanh các đơn mới và trạng thái xử lý hiện tại.</p>
+                    <div class="mt-5 grid grid-cols-2 gap-3">
+                        <div class="rounded-xl border border-white/10 bg-white/5 p-3">
+                            <p class="text-[11px] uppercase tracking-widest text-sidebar-foreground/50">Đang xử lý</p>
+                            <strong class="mt-2 block text-2xl font-semibold text-white">@Model.PendingOrders</strong>
+                        </div>
+                        <div class="rounded-xl border border-white/10 bg-white/5 p-3">
+                            <p class="text-[11px] uppercase tracking-widest text-sidebar-foreground/50">Liên hệ</p>
+                            <strong class="mt-2 block text-2xl font-semibold text-white">@Model.ContactMessagesCount</strong>
+                        </div>
+                    </div>
                 </div>
-                <div class="admin-pill">@Model.OrdersThisMonth đơn trong tháng</div>
             </div>
+        </div>
+    </section>
 
-            <div class="table-responsive">
-                <table class="table admin-table align-middle mb-0">
-                    <thead>
-                        <tr>
-                            <th>Mã đơn</th>
-                            <th>Khách hàng</th>
-                            <th>Thanh toán</th>
-                            <th>Ngày tạo</th>
-                            <th>Trạng thái</th>
-                            <th class="text-end">Tổng tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model.RecentOrders.Count == 0)
-                        {
-                            <tr>
-                                <td colspan="6" class="text-center py-4">Chưa có đơn hàng nào trong hệ thống.</td>
+    <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article class="rounded-xl border border-border bg-card p-5 shadow-xs">
+            <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-muted-foreground">Tổng doanh thu</span>
+                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">VND</span>
+            </div>
+            <strong class="mt-4 block text-3xl font-bold tracking-tight text-foreground">@Model.GrossRevenue.ToString("#,##0")</strong>
+            <p class="mt-2 text-sm text-muted-foreground">Tháng này: @Model.RevenueThisMonth.ToString("#,##0") VND</p>
+        </article>
+
+        <article class="rounded-xl border border-border bg-card p-5 shadow-xs">
+            <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-muted-foreground">Đơn hàng</span>
+                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-700">@Model.OrdersThisMonth</span>
+            </div>
+            <strong class="mt-4 block text-3xl font-bold tracking-tight text-foreground">@Model.OrdersTotal</strong>
+            <p class="mt-2 text-sm text-muted-foreground">@Model.PendingOrders đơn cần xử lý tiếp</p>
+        </article>
+
+        <article class="rounded-xl border border-border bg-card p-5 shadow-xs" id="admin-products">
+            <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-muted-foreground">Sản phẩm đang bán</span>
+                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-700">@Model.LowStockProductsCount</span>
+            </div>
+            <strong class="mt-4 block text-3xl font-bold tracking-tight text-foreground">@Model.ProductsActive</strong>
+            <p class="mt-2 text-sm text-muted-foreground">@Model.LowStockProductsCount sản phẩm gần hết hàng</p>
+        </article>
+
+        <article class="rounded-xl border border-border bg-card p-5 shadow-xs" id="admin-customers">
+            <div class="flex items-center justify-between">
+                <span class="text-sm font-medium text-muted-foreground">Khách hàng</span>
+                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">@Model.NewCustomersThisMonth</span>
+            </div>
+            <strong class="mt-4 block text-3xl font-bold tracking-tight text-foreground">@Model.CustomersTotal</strong>
+            <p class="mt-2 text-sm text-muted-foreground">@Model.NewCustomersThisMonth tài khoản mới trong tháng</p>
+        </article>
+    </section>
+
+    <section class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+        <div class="xl:col-span-8" id="admin-orders">
+            <div class="rounded-xl border border-border bg-card shadow-xs">
+                <div class="flex flex-col gap-3 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h3 class="text-base font-semibold text-foreground">Đơn hàng gần đây</h3>
+                        <p class="mt-1 text-sm text-muted-foreground">Các đơn mới nhất và trạng thái xử lý hiện tại.</p>
+                    </div>
+                    <span class="inline-flex w-fit rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">@Model.OrdersThisMonth đơn trong tháng</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-border text-left text-xs uppercase tracking-widest text-muted-foreground">
+                                <th class="px-5 py-3 font-semibold">Đơn</th>
+                                <th class="px-5 py-3 font-semibold">Khách hàng</th>
+                                <th class="px-5 py-3 font-semibold">Thanh toán</th>
+                                <th class="px-5 py-3 font-semibold">Ngày tạo</th>
+                                <th class="px-5 py-3 font-semibold">Trạng thái</th>
+                                <th class="px-5 py-3 text-right font-semibold">Tổng tiền</th>
                             </tr>
-                        }
-                        else
-                        {
-                            foreach (var order in Model.RecentOrders)
+                        </thead>
+                        <tbody>
+                            @if (Model.RecentOrders.Count == 0)
                             {
                                 <tr>
-                                    <td><strong>#@order.OrderId</strong></td>
-                                    <td>@order.CustomerName</td>
-                                    <td>@order.PaymentMethod</td>
-                                    <td>@(order.CreatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "--")</td>
-                                    <td>
-                                        <span class="admin-status-chip">@order.Status</span>
-                                    </td>
-                                    <td class="text-end">@order.TotalAmount.ToString("#,##0") VND</td>
+                                    <td colspan="6" class="px-5 py-8 text-center text-sm text-muted-foreground">Chưa có đơn hàng.</td>
                                 </tr>
                             }
+                            else
+                            {
+                                foreach (var order in Model.RecentOrders)
+                                {
+                                    var normalizedStatus = (order.Status ?? string.Empty).Trim().ToUpperInvariant();
+                                    var statusClasses = normalizedStatus switch
+                                    {
+                                        "COMPLETED" => "bg-emerald-100 text-emerald-700",
+                                        "CANCELLED" => "bg-rose-100 text-rose-700",
+                                        "AWAITING PAYMENT" => "bg-amber-100 text-amber-700",
+                                        "AWAITING STORE PAYMENT" => "bg-amber-100 text-amber-700",
+                                        _ => "bg-blue-100 text-blue-700"
+                                    };
+
+                                    <tr class="border-b border-border last:border-b-0">
+                                        <td class="px-5 py-4 font-semibold text-foreground">#@order.OrderId</td>
+                                        <td class="px-5 py-4 text-muted-foreground">@order.CustomerName</td>
+                                        <td class="px-5 py-4 text-muted-foreground">@order.PaymentMethod</td>
+                                        <td class="px-5 py-4 text-muted-foreground">@(order.CreatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "--")</td>
+                                        <td class="px-5 py-4">
+                                            <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold @statusClasses">@order.Status</span>
+                                        </td>
+                                        <td class="px-5 py-4 text-right font-semibold text-foreground">@order.TotalAmount.ToString("#,##0") VND</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="xl:col-span-4">
+            <div class="rounded-xl border border-border bg-card p-5 shadow-xs">
+                <h3 class="text-base font-semibold text-foreground">Tình hình vận hành</h3>
+                <p class="mt-1 text-sm text-muted-foreground">Các chỉ số cần theo dõi hằng ngày.</p>
+
+                <div class="mt-5 space-y-3">
+                    <div class="rounded-xl border border-border bg-accent/40 p-4">
+                        <p class="text-sm text-muted-foreground">Giá trị đơn trung bình</p>
+                        <strong class="mt-2 block text-2xl font-semibold text-foreground">@Model.AverageOrderValue.ToString("#,##0") VND</strong>
+                    </div>
+                    <div class="rounded-xl border border-border bg-accent/40 p-4">
+                        <p class="text-sm text-muted-foreground">Tin nhắn liên hệ</p>
+                        <strong class="mt-2 block text-2xl font-semibold text-foreground">@Model.ContactMessagesCount</strong>
+                    </div>
+                    <div class="rounded-xl border border-border bg-accent/40 p-4">
+                        <p class="text-sm text-muted-foreground">Khách mới tháng này</p>
+                        <strong class="mt-2 block text-2xl font-semibold text-foreground">@Model.NewCustomersThisMonth</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+        <div class="xl:col-span-6">
+            <div class="rounded-xl border border-border bg-card p-5 shadow-xs">
+                <h3 class="text-base font-semibold text-foreground">Phân bổ trạng thái đơn</h3>
+                <p class="mt-1 text-sm text-muted-foreground">Tỷ lệ đơn hàng theo từng trạng thái.</p>
+
+                <div class="mt-5 space-y-4">
+                    @if (Model.OrderStatusItems.Count == 0)
+                    {
+                        <p class="text-sm text-muted-foreground">Chưa có dữ liệu trạng thái đơn.</p>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.OrderStatusItems)
+                        {
+                            <div class="rounded-xl border border-border bg-background p-4">
+                                <div class="mb-3 flex items-center justify-between gap-3">
+                                    <strong class="text-sm font-semibold text-foreground">@item.Label</strong>
+                                    <span class="text-sm text-muted-foreground">@item.Count đơn</span>
+                                </div>
+                                <div class="h-2 overflow-hidden rounded-full bg-accent">
+                                    <div class="h-full rounded-full bg-primary" style="width:@item.Percentage.ToString(System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                                </div>
+                                <p class="mt-2 text-xs font-medium text-muted-foreground">@item.Percentage.ToString("0.#")%</p>
+                            </div>
                         }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-4" id="admin-customers">
-        <div class="admin-panel h-100">
-            <div class="admin-panel-heading">
-                <div>
-                    <h3>Tổng quan vận hành</h3>
-                    <p>Các chỉ số nhanh cần chú ý mỗi ngày.</p>
-                </div>
-            </div>
-
-            <div class="admin-mini-stats">
-                <div class="admin-mini-stat">
-                    <span>Giá trị đơn trung bình</span>
-                    <strong>@Model.AverageOrderValue.ToString("#,##0") VND</strong>
-                </div>
-                <div class="admin-mini-stat">
-                    <span>Tin nhắn liên hệ</span>
-                    <strong>@Model.ContactMessagesCount</strong>
-                </div>
-                <div class="admin-mini-stat">
-                    <span>Khách hàng mới tháng này</span>
-                    <strong>@Model.NewCustomersThisMonth</strong>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="row g-4 mb-4">
-    <div class="col-xl-6">
-        <div class="admin-panel h-100">
-            <div class="admin-panel-heading">
-                <div>
-                    <h3>Trạng thái đơn hàng</h3>
-                    <p>Phân bổ số lượng đơn theo từng trạng thái hiện tại.</p>
-                </div>
-            </div>
-
-            <div class="admin-breakdown-list">
-                @if (Model.OrderStatusItems.Count == 0)
-                {
-                    <p class="mb-0">Chưa có dữ liệu đơn hàng.</p>
-                }
-                else
-                {
-                    foreach (var item in Model.OrderStatusItems)
-                    {
-                        <div class="admin-breakdown-item">
-                            <div class="admin-breakdown-top">
-                                <strong>@item.Label</strong>
-                                <span>@item.Count đơn</span>
-                            </div>
-                            <div class="admin-progress-track">
-                                <div class="admin-progress-bar" style="width:@item.Percentage.ToString(System.Globalization.CultureInfo.InvariantCulture)%"></div>
-                            </div>
-                            <small>@item.Percentage.ToString("0.#")%</small>
-                        </div>
                     }
-                }
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-6">
-        <div class="admin-panel h-100">
-            <div class="admin-panel-heading">
-                <div>
-                    <h3>Phương thức thanh toán</h3>
-                    <p>Dữ liệu từ bảng payment để biết khách đang ưu tiên cách thanh toán nào.</p>
                 </div>
             </div>
+        </div>
 
-            <div class="admin-breakdown-list">
-                @if (Model.PaymentMethodItems.Count == 0)
-                {
-                    <p class="mb-0">Chưa có dữ liệu thanh toán.</p>
-                }
-                else
-                {
-                    foreach (var item in Model.PaymentMethodItems)
+        <div class="xl:col-span-6">
+            <div class="rounded-xl border border-border bg-card p-5 shadow-xs">
+                <h3 class="text-base font-semibold text-foreground">Cơ cấu thanh toán</h3>
+                <p class="mt-1 text-sm text-muted-foreground">Các phương thức thanh toán khách đang sử dụng.</p>
+
+                <div class="mt-5 space-y-4">
+                    @if (Model.PaymentMethodItems.Count == 0)
                     {
-                        <div class="admin-breakdown-item">
-                            <div class="admin-breakdown-top">
-                                <strong>@item.Label</strong>
-                                <span>@item.Count giao dịch</span>
-                            </div>
-                            <div class="admin-progress-track admin-progress-track-alt">
-                                <div class="admin-progress-bar admin-progress-bar-alt" style="width:@item.Percentage.ToString(System.Globalization.CultureInfo.InvariantCulture)%"></div>
-                            </div>
-                            <small>@item.Percentage.ToString("0.#")%</small>
-                        </div>
+                        <p class="text-sm text-muted-foreground">Chưa có dữ liệu thanh toán.</p>
                     }
-                }
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="row g-4">
-    <div class="col-xl-6" id="admin-inventory">
-        <div class="admin-panel h-100">
-            <div class="admin-panel-heading">
-                <div>
-                    <h3>Cảnh báo tồn kho thấp</h3>
-                    <p>Ưu tiên nhập thêm hàng cho các sản phẩm sắp hết.</p>
-                </div>
-            </div>
-
-            <div class="admin-list-stack">
-                @if (Model.LowStockProducts.Count == 0)
-                {
-                    <p class="mb-0">Chưa có sản phẩm nào ở ngưỡng tồn kho thấp.</p>
-                }
-                else
-                {
-                    foreach (var product in Model.LowStockProducts)
+                    else
                     {
-                        <article class="admin-list-card">
-                            <div>
-                                <strong>@product.Name</strong>
-                                <p>@product.Brand · @product.CategoryName</p>
+                        foreach (var item in Model.PaymentMethodItems)
+                        {
+                            <div class="rounded-xl border border-border bg-background p-4">
+                                <div class="mb-3 flex items-center justify-between gap-3">
+                                    <strong class="text-sm font-semibold text-foreground">@item.Label</strong>
+                                    <span class="text-sm text-muted-foreground">@item.Count giao dịch</span>
+                                </div>
+                                <div class="h-2 overflow-hidden rounded-full bg-accent">
+                                    <div class="h-full rounded-full bg-amber-500" style="width:@item.Percentage.ToString(System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                                </div>
+                                <p class="mt-2 text-xs font-medium text-muted-foreground">@item.Percentage.ToString("0.#")%</p>
                             </div>
-                            <div class="text-end">
-                                <span class="admin-stock-badge @(product.Stock <= 2 ? "is-danger" : string.Empty)">Còn @product.Stock</span>
-                                <small>@product.FinalPrice.ToString("#,##0") VND</small>
-                            </div>
-                        </article>
+                        }
                     }
-                }
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-6">
-        <div class="admin-panel h-100">
-            <div class="admin-panel-heading">
-                <div>
-                    <h3>Sản phẩm bán tốt</h3>
-                    <p>Xác định nhóm hàng kéo doanh thu để đẩy hiển thị hoặc bổ sung hàng.</p>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="admin-ranking-list">
-                @if (Model.TopProducts.Count == 0)
-                {
-                    <p class="mb-0">Chưa có dữ liệu bán hàng để xếp hạng sản phẩm.</p>
-                }
-                else
-                {
-                    foreach (var product in Model.TopProducts)
+    <section class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+        <div class="xl:col-span-6" id="admin-inventory">
+            <div class="rounded-xl border border-border bg-card p-5 shadow-xs">
+                <h3 class="text-base font-semibold text-foreground">Cảnh báo tồn kho thấp</h3>
+                <p class="mt-1 text-sm text-muted-foreground">Những sản phẩm nên nhập bổ sung trước.</p>
+
+                <div class="mt-5 space-y-3">
+                    @if (Model.LowStockProducts.Count == 0)
                     {
-                        var width = decimal.Round((decimal)product.UnitsSold * 100m / maxTopProductUnits, 1, MidpointRounding.AwayFromZero);
+                        <p class="text-sm text-muted-foreground">Hiện chưa có sản phẩm tồn kho thấp.</p>
+                    }
+                    else
+                    {
+                        foreach (var product in Model.LowStockProducts)
+                        {
+                            var stockClasses = product.Stock <= 2 ? "bg-rose-100 text-rose-700" : "bg-amber-100 text-amber-700";
 
-                        <article class="admin-ranking-item">
-                            <div class="admin-ranking-header">
+                            <article class="flex flex-col gap-3 rounded-xl border border-border bg-background p-4 sm:flex-row sm:items-center sm:justify-between">
                                 <div>
-                                    <strong>@product.Name</strong>
-                                    <p>@product.Brand</p>
+                                    <strong class="text-sm font-semibold text-foreground">@product.Name</strong>
+                                    <p class="mt-1 text-sm text-muted-foreground">@product.Brand · @product.CategoryName</p>
                                 </div>
-                                <div class="text-end">
-                                    <span>@product.UnitsSold lượt bán</span>
-                                    <small>@product.Revenue.ToString("#,##0") VND</small>
+                                <div class="sm:text-right">
+                                    <span class="inline-flex rounded-full px-3 py-1 text-xs font-semibold @stockClasses">Tồn kho @product.Stock</span>
+                                    <p class="mt-2 text-sm font-semibold text-foreground">@product.FinalPrice.ToString("#,##0") VND</p>
                                 </div>
-                            </div>
-                            <div class="admin-progress-track">
-                                <div class="admin-progress-bar" style="width:@width.ToString(System.Globalization.CultureInfo.InvariantCulture)%"></div>
-                            </div>
-                        </article>
+                            </article>
+                        }
                     }
-                }
+                </div>
             </div>
         </div>
-    </div>
-</section>
+
+        <div class="xl:col-span-6">
+            <div class="rounded-xl border border-border bg-card p-5 shadow-xs">
+                <h3 class="text-base font-semibold text-foreground">Sản phẩm bán chạy</h3>
+                <p class="mt-1 text-sm text-muted-foreground">Các sản phẩm có sản lượng và doanh thu tốt nhất.</p>
+
+                <div class="mt-5 space-y-4">
+                    @if (Model.TopProducts.Count == 0)
+                    {
+                        <p class="text-sm text-muted-foreground">Chưa có dữ liệu xếp hạng bán hàng.</p>
+                    }
+                    else
+                    {
+                        foreach (var product in Model.TopProducts)
+                        {
+                            var width = decimal.Round((decimal)product.UnitsSold * 100m / maxTopProductUnits, 1, MidpointRounding.AwayFromZero);
+
+                            <article class="rounded-xl border border-border bg-background p-4">
+                                <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                                    <div>
+                                        <strong class="text-sm font-semibold text-foreground">@product.Name</strong>
+                                        <p class="mt-1 text-sm text-muted-foreground">@product.Brand</p>
+                                    </div>
+                                    <div class="sm:text-right">
+                                        <p class="text-sm font-medium text-foreground">@product.UnitsSold sản phẩm</p>
+                                        <p class="text-sm text-muted-foreground">@product.Revenue.ToString("#,##0") VND</p>
+                                    </div>
+                                </div>
+                                <div class="h-2 overflow-hidden rounded-full bg-accent">
+                                    <div class="h-full rounded-full bg-primary" style="width:@width.ToString(System.Globalization.CultureInfo.InvariantCulture)%"></div>
+                                </div>
+                            </article>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

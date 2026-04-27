@@ -1,0 +1,128 @@
+@model AdminProductListViewModel
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Quản lý sản phẩm";
+
+    string PrimaryImage(Product product)
+    {
+        var imageUrl = product.ProductImages
+            .Where(image => !string.IsNullOrWhiteSpace(image.ImageUrl))
+            .OrderByDescending(image => image.IsMain ?? false)
+            .Select(image => image.ImageUrl!.Trim())
+            .FirstOrDefault();
+
+        if (!string.IsNullOrWhiteSpace(imageUrl))
+        {
+            return imageUrl;
+        }
+
+        return string.IsNullOrWhiteSpace(product.Thumbnail)
+            ? "~/assets/img/product/product-1.jpg"
+            : product.Thumbnail.Trim();
+    }
+}
+
+<div class="space-y-6">
+    <section class="rounded-xl border border-border bg-card p-5 shadow-xs">
+        <div class="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+            <div>
+                <p class="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Catalog</p>
+                <h2 class="mt-2 text-2xl font-bold tracking-tight text-foreground">Sản phẩm trong cửa hàng</h2>
+                <p class="mt-2 text-sm text-muted-foreground">Tạo sản phẩm, sửa thông tin, bật/tắt bán và quản lý nhiều ảnh cho từng sản phẩm.</p>
+            </div>
+            <a href="@Url.Action("CreateProduct", "Admin")" class="inline-flex w-fit items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90">Thêm sản phẩm</a>
+        </div>
+
+        <form method="get" class="mt-5 grid grid-cols-1 gap-3 md:grid-cols-[1fr_220px_auto]">
+            <input type="text" name="keyword" value="@Model.Keyword" class="h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors focus:border-primary" placeholder="Tìm theo tên hoặc thương hiệu">
+            <select name="categoryId" class="h-10 rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors focus:border-primary">
+                <option value="">Tất cả danh mục</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.CategoryId" selected="@(Model.CategoryId == category.CategoryId)">@category.CategoryName</option>
+                }
+            </select>
+            <button type="submit" class="inline-flex h-10 items-center justify-center rounded-md border bg-background px-4 text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground">Lọc</button>
+        </form>
+    </section>
+
+    <section class="rounded-xl border border-border bg-card shadow-xs">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-border text-left text-xs uppercase tracking-widest text-muted-foreground">
+                        <th class="px-5 py-3 font-semibold">Sản phẩm</th>
+                        <th class="px-5 py-3 font-semibold">Danh mục</th>
+                        <th class="px-5 py-3 font-semibold">Giá</th>
+                        <th class="px-5 py-3 font-semibold">Tồn kho</th>
+                        <th class="px-5 py-3 font-semibold">Ảnh</th>
+                        <th class="px-5 py-3 font-semibold">Trạng thái</th>
+                        <th class="px-5 py-3 text-right font-semibold">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Products.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="7" class="px-5 py-8 text-center text-sm text-muted-foreground">Chưa có sản phẩm phù hợp.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var product in Model.Products)
+                        {
+                            var finalPrice = product.Discount.HasValue && product.Discount.Value > 0m
+                                ? product.Price * (1m - (product.Discount.Value / 100m))
+                                : product.Price;
+
+                            <tr class="border-b border-border last:border-b-0">
+                                <td class="px-5 py-4">
+                                    <div class="flex min-w-[260px] items-center gap-3">
+                                        <img src="@Url.Content(PrimaryImage(product))" alt="@product.Name" class="h-14 w-14 rounded-md border border-border object-cover">
+                                        <div>
+                                            <a href="@Url.Action("EditProduct", "Admin", new { id = product.ProductId })" class="font-semibold text-foreground hover:text-primary">@product.Name</a>
+                                            <p class="mt-1 text-sm text-muted-foreground">@(string.IsNullOrWhiteSpace(product.Brand) ? "Chưa có thương hiệu" : product.Brand)</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-4 text-muted-foreground">@(product.Category?.CategoryName ?? "Chưa phân loại")</td>
+                                <td class="px-5 py-4">
+                                    <strong class="text-foreground">@finalPrice.ToString("#,##0") VND</strong>
+                                    @if (product.Discount.HasValue && product.Discount.Value > 0m)
+                                    {
+                                        <p class="mt-1 text-xs text-muted-foreground">Giảm @product.Discount.Value.ToString("0.#")%</p>
+                                    }
+                                </td>
+                                <td class="px-5 py-4 text-muted-foreground">@(product.Stock ?? 0)</td>
+                                <td class="px-5 py-4 text-muted-foreground">@product.ProductImages.Count ảnh</td>
+                                <td class="px-5 py-4">
+                                    @if (product.IsActive != false)
+                                    {
+                                        <span class="inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">Đang bán</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="inline-flex rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700">Đang ẩn</span>
+                                    }
+                                </td>
+                                <td class="px-5 py-4">
+                                    <div class="flex justify-end gap-2">
+                                        <a href="@Url.Action("Product", "Shop", new { id = product.ProductId })" class="inline-flex items-center justify-center rounded-md border bg-background px-3 py-2 text-xs font-medium transition-all hover:bg-accent hover:text-accent-foreground">Xem</a>
+                                        <a href="@Url.Action("EditProduct", "Admin", new { id = product.ProductId })" class="inline-flex items-center justify-center rounded-md bg-primary px-3 py-2 text-xs font-medium text-primary-foreground transition-all hover:bg-primary/90">Sửa</a>
+                                        <form asp-controller="Admin" asp-action="ToggleProductStatus" asp-route-id="@product.ProductId" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="inline-flex items-center justify-center rounded-md border bg-background px-3 py-2 text-xs font-medium transition-all hover:bg-accent hover:text-accent-foreground">
+                                                @(product.IsActive != false ? "Ẩn" : "Bật")
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>

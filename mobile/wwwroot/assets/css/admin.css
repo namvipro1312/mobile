@@ -1,16 +1,23 @@
 :root {
-    --admin-bg: #f5f7fb;
+    --admin-bg: #f3f6fb;
     --admin-surface: #ffffff;
-    --admin-border: #e6eaf2;
+    --admin-surface-soft: #f7f9fc;
+    --admin-border: #dde5ef;
     --admin-heading: #172033;
-    --admin-text: #4b5567;
-    --admin-muted: #7d8798;
-    --admin-primary: #6c63ff;
-    --admin-primary-soft: rgba(108, 99, 255, 0.12);
-    --admin-secondary: #f6c84c;
-    --admin-danger: #ff6b6b;
-    --admin-success: #17b26a;
-    --admin-shadow: 0 24px 50px rgba(23, 32, 51, 0.08);
+    --admin-text: #445064;
+    --admin-muted: #728096;
+    --admin-primary: #0f6cbd;
+    --admin-primary-soft: rgba(15, 108, 189, 0.12);
+    --admin-accent: #f3b339;
+    --admin-danger: #d64545;
+    --admin-danger-soft: rgba(214, 69, 69, 0.14);
+    --admin-success: #198754;
+    --admin-success-soft: rgba(25, 135, 84, 0.14);
+    --admin-warning: #b7791f;
+    --admin-warning-soft: rgba(243, 179, 57, 0.18);
+    --admin-info: #0f6cbd;
+    --admin-info-soft: rgba(15, 108, 189, 0.12);
+    --admin-shadow: 0 22px 50px rgba(23, 32, 51, 0.08);
 }
 
 *,
@@ -25,8 +32,10 @@ body {
 }
 
 body.admin-shell-body {
-    background: radial-gradient(circle at top left, rgba(108, 99, 255, 0.12), transparent 28%),
-        linear-gradient(180deg, #eef2ff 0%, var(--admin-bg) 28%, #f7f9fc 100%);
+    background:
+        radial-gradient(circle at top left, rgba(15, 108, 189, 0.08), transparent 26%),
+        radial-gradient(circle at bottom right, rgba(243, 179, 57, 0.1), transparent 22%),
+        linear-gradient(180deg, #eef4fb 0%, var(--admin-bg) 32%, #f8fafc 100%);
     color: var(--admin-text);
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
@@ -38,13 +47,13 @@ body.admin-shell-body {
 }
 
 .admin-sidebar {
-    background: linear-gradient(180deg, #172033 0%, #1e2740 100%);
-    color: #d8def0;
+    background: linear-gradient(180deg, #142033 0%, #1b2940 100%);
+    color: #d6deec;
     display: flex;
     flex-direction: column;
     gap: 28px;
     padding: 28px 22px;
-    width: 278px;
+    width: 286px;
 }
 
 .admin-brand {
@@ -57,7 +66,7 @@ body.admin-shell-body {
 
 .admin-brand-mark {
     align-items: center;
-    background: linear-gradient(135deg, var(--admin-secondary) 0%, #ffdf88 100%);
+    background: linear-gradient(135deg, var(--admin-accent) 0%, #ffd77d 100%);
     border-radius: 18px;
     color: #302100;
     display: inline-flex;
@@ -74,7 +83,7 @@ body.admin-shell-body {
 }
 
 .admin-brand small {
-    color: rgba(216, 222, 240, 0.72);
+    color: rgba(214, 222, 236, 0.72);
     display: block;
     font-size: 12px;
     margin-top: 4px;
@@ -87,7 +96,7 @@ body.admin-shell-body {
 }
 
 .admin-nav-title {
-    color: rgba(216, 222, 240, 0.56);
+    color: rgba(214, 222, 236, 0.58);
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.08em;
@@ -99,17 +108,17 @@ body.admin-shell-body {
 .admin-nav a {
     align-items: center;
     border-radius: 16px;
-    color: #d8def0;
+    color: #d6deec;
     display: flex;
     gap: 12px;
     padding: 14px 16px;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .admin-nav a:hover,
 .admin-nav a.is-active {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.11);
     color: #fff;
     transform: translateX(3px);
 }
@@ -128,7 +137,7 @@ body.admin-shell-body {
 }
 
 .admin-sidebar-card-label {
-    color: rgba(216, 222, 240, 0.64);
+    color: rgba(214, 222, 236, 0.64);
     display: block;
     font-size: 11px;
     font-weight: 700;
@@ -145,10 +154,11 @@ body.admin-shell-body {
 }
 
 .admin-sidebar-card p {
-    color: rgba(216, 222, 240, 0.72);
+    color: rgba(214, 222, 236, 0.72);
     font-size: 13px;
     line-height: 1.6;
     margin: 0;
+    word-break: break-word;
 }
 
 .admin-main {
@@ -162,9 +172,9 @@ body.admin-shell-body {
 .admin-topbar {
     align-items: center;
     display: flex;
-    justify-content: space-between;
     gap: 16px;
-    margin-bottom: 24px;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
 .admin-topbar-kicker {
@@ -201,16 +211,18 @@ body.admin-shell-body {
 
 .admin-primary-button,
 .admin-ghost-button {
+    align-items: center;
     border-radius: 999px;
     display: inline-flex;
     font-size: 14px;
     font-weight: 700;
+    justify-content: center;
     padding: 12px 18px;
     text-decoration: none;
 }
 
 .admin-primary-button {
-    background: linear-gradient(135deg, var(--admin-primary) 0%, #897bff 100%);
+    background: linear-gradient(135deg, var(--admin-primary) 0%, #2b8ddb 100%);
     border: 0;
     color: #fff;
 }
@@ -219,6 +231,26 @@ body.admin-shell-body {
     background: #fff;
     border: 1px solid var(--admin-border);
     color: var(--admin-heading);
+}
+
+.admin-alert {
+    border-radius: 18px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    padding: 14px 16px;
+}
+
+.admin-alert-success {
+    background: #edf9f2;
+    border: 1px solid #ccebd8;
+    color: #16603f;
+}
+
+.admin-alert-error {
+    background: #fff1f1;
+    border: 1px solid #f3cccc;
+    color: #9b2f2f;
 }
 
 .admin-hero,
@@ -238,7 +270,7 @@ body.admin-shell-body {
 }
 
 .admin-hero::before {
-    background: radial-gradient(circle at top right, rgba(246, 200, 76, 0.26), transparent 30%);
+    background: radial-gradient(circle at top right, rgba(243, 179, 57, 0.18), transparent 30%);
     content: "";
     inset: 0;
     pointer-events: none;
@@ -265,7 +297,7 @@ body.admin-shell-body {
     font-size: 38px;
     font-weight: 800;
     letter-spacing: -0.03em;
-    line-height: 1.15;
+    line-height: 1.14;
     margin-bottom: 16px;
     max-width: 720px;
 }
@@ -279,13 +311,13 @@ body.admin-shell-body {
 }
 
 .admin-hero-card {
-    background: linear-gradient(180deg, #172033 0%, #202b47 100%);
+    background: linear-gradient(180deg, #16233a 0%, #203454 100%);
     color: #fff;
     padding: 24px;
 }
 
-.admin-hero-card span {
-    color: rgba(255, 255, 255, 0.7);
+.admin-hero-card > span {
+    color: rgba(255, 255, 255, 0.72);
     display: block;
     font-size: 12px;
     font-weight: 700;
@@ -294,15 +326,46 @@ body.admin-shell-body {
     text-transform: uppercase;
 }
 
-.admin-hero-card strong {
+.admin-hero-card > strong {
     display: block;
     font-size: 22px;
     margin-bottom: 6px;
 }
 
-.admin-hero-card p {
+.admin-hero-card > p {
     color: rgba(255, 255, 255, 0.82);
     font-size: 14px;
+    margin: 0;
+}
+
+.admin-hero-metrics {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 18px;
+}
+
+.admin-hero-metric {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 14px;
+}
+
+.admin-hero-metric small {
+    color: rgba(255, 255, 255, 0.68);
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.admin-hero-metric strong {
+    color: #fff;
+    font-size: 22px;
+    margin: 0;
 }
 
 .admin-stat-grid {
@@ -378,9 +441,9 @@ body.admin-shell-body {
 }
 
 .admin-pill {
-    background: rgba(246, 200, 76, 0.18);
+    background: var(--admin-warning-soft);
     border-radius: 999px;
-    color: #9b6c00;
+    color: var(--admin-warning);
     font-size: 12px;
     font-weight: 800;
     padding: 10px 14px;
@@ -403,20 +466,40 @@ body.admin-shell-body {
     color: var(--admin-text);
     padding-bottom: 16px;
     padding-top: 16px;
+    vertical-align: middle;
 }
 
-.admin-table strong {
+.admin-table strong,
+.admin-money {
     color: var(--admin-heading);
 }
 
 .admin-status-chip {
-    background: rgba(108, 99, 255, 0.12);
     border-radius: 999px;
-    color: var(--admin-primary);
     display: inline-flex;
     font-size: 12px;
     font-weight: 800;
     padding: 8px 12px;
+}
+
+.admin-status-chip.is-success {
+    background: var(--admin-success-soft);
+    color: var(--admin-success);
+}
+
+.admin-status-chip.is-danger {
+    background: var(--admin-danger-soft);
+    color: var(--admin-danger);
+}
+
+.admin-status-chip.is-warning {
+    background: var(--admin-warning-soft);
+    color: var(--admin-warning);
+}
+
+.admin-status-chip.is-info {
+    background: var(--admin-info-soft);
+    color: var(--admin-info);
 }
 
 .admin-mini-stats {
@@ -425,8 +508,8 @@ body.admin-shell-body {
 }
 
 .admin-mini-stat {
-    background: #f8faff;
-    border: 1px solid #edf1f8;
+    background: var(--admin-surface-soft);
+    border: 1px solid #e8eef6;
     border-radius: 20px;
     padding: 18px;
 }
@@ -455,8 +538,8 @@ body.admin-shell-body {
 .admin-breakdown-item,
 .admin-list-card,
 .admin-ranking-item {
-    background: #fafbff;
-    border: 1px solid #edf1f8;
+    background: #fafcff;
+    border: 1px solid #e8eef6;
     border-radius: 20px;
     padding: 18px;
 }
@@ -501,7 +584,7 @@ body.admin-shell-body {
 }
 
 .admin-stock-badge {
-    background: rgba(23, 178, 106, 0.14);
+    background: var(--admin-success-soft);
     border-radius: 999px;
     color: var(--admin-success);
     display: inline-flex;
@@ -512,29 +595,29 @@ body.admin-shell-body {
 }
 
 .admin-stock-badge.is-danger {
-    background: rgba(255, 107, 107, 0.14);
+    background: var(--admin-danger-soft);
     color: var(--admin-danger);
 }
 
 .admin-progress-track {
-    background: #eaedf5;
+    background: #e7edf6;
     border-radius: 999px;
     height: 10px;
     overflow: hidden;
 }
 
 .admin-progress-track-alt {
-    background: rgba(246, 200, 76, 0.18);
+    background: var(--admin-warning-soft);
 }
 
 .admin-progress-bar {
-    background: linear-gradient(90deg, var(--admin-primary) 0%, #8d82ff 100%);
+    background: linear-gradient(90deg, var(--admin-primary) 0%, #2b8ddb 100%);
     border-radius: 999px;
     height: 100%;
 }
 
 .admin-progress-bar-alt {
-    background: linear-gradient(90deg, var(--admin-secondary) 0%, #ffd875 100%);
+    background: linear-gradient(90deg, var(--admin-accent) 0%, #ffd06b 100%);
 }
 
 @media (max-width: 1199.98px) {
@@ -569,7 +652,8 @@ body.admin-shell-body {
 }
 
 @media (max-width: 767.98px) {
-    .admin-stat-grid {
+    .admin-stat-grid,
+    .admin-hero-metrics {
         grid-template-columns: 1fr;
     }
 
@@ -586,5 +670,10 @@ body.admin-shell-body {
 
     .admin-topbar-actions {
         flex-wrap: wrap;
+    }
+
+    .admin-status-chip,
+    .admin-pill {
+        white-space: normal;
     }
 }

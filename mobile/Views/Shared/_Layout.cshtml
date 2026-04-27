@@ -386,17 +386,18 @@
          data-contact-url="@Url.Action("Contact", "Home")"
          data-compare-url="@Url.Action("Compare", "Shop")"
          data-wishlist-url="@Url.Action("Wishlist", "Shop")"
+         data-chat-api-url="/api/chatbox"
          data-user-name="@(currentUser?.FullName ?? currentUser?.Username ?? "bạn")">
         <button type="button" class="support-chatbox-toggle" id="supportChatboxToggle" aria-expanded="false" aria-controls="supportChatboxPanel">
             <span class="support-chatbox-toggle-icon"><i class="fa fa-comments"></i></span>
-            <span class="support-chatbox-toggle-text">Chat hỗ trợ</span>
+            <span class="support-chatbox-toggle-text">Chat AI</span>
         </button>
 
         <section class="support-chatbox-panel" id="supportChatboxPanel" aria-hidden="true">
             <header class="support-chatbox-header">
                 <div>
-                    <strong>Hỗ trợ nhanh</strong>
-                    <p>Tra cứu mua hàng, giỏ hàng, thanh toán và tài khoản.</p>
+                    <strong>Trợ lý Gemini</strong>
+                    <p>Hỏi về shop hoặc hỏi kiến thức chung, chatbox sẽ trả lời trực tiếp.</p>
                 </div>
                 <button type="button" class="support-chatbox-close" id="supportChatboxClose" aria-label="Đóng chatbox">
                     <i class="fa fa-times"></i>
@@ -406,14 +407,14 @@
             <div class="support-chatbox-body" id="supportChatboxBody"></div>
 
             <div class="support-chatbox-quick-actions">
-                <button type="button" class="support-chatbox-chip" data-chat-action="cart">Giỏ hàng</button>
-                <button type="button" class="support-chatbox-chip" data-chat-action="checkout">Thanh toán</button>
-                <button type="button" class="support-chatbox-chip" data-chat-action="account">Tài khoản</button>
-                <button type="button" class="support-chatbox-chip" data-chat-action="contact">Liên hệ</button>
+                <button type="button" class="support-chatbox-chip" data-chat-prompt="Mở giúp tôi trang giỏ hàng và hướng dẫn cách thanh toán nhanh.">Giỏ hàng</button>
+                <button type="button" class="support-chatbox-chip" data-chat-prompt="Tư vấn giúp tôi cách chọn laptop phù hợp cho học tập và làm việc.">Tư vấn laptop</button>
+                <button type="button" class="support-chatbox-chip" data-chat-prompt="Giải thích ngắn gọn AI tạo sinh là gì.">Hỏi ngoài shop</button>
+                <button type="button" class="support-chatbox-chip" data-chat-prompt="Cho tôi biết cách liên hệ cửa hàng và theo dõi tài khoản.">Liên hệ</button>
             </div>
 
             <form class="support-chatbox-form" id="supportChatboxForm">
-                <input type="text" class="support-chatbox-input" id="supportChatboxInput" placeholder="Nhập câu hỏi, ví dụ: thanh toán QR">
+                <input type="text" class="support-chatbox-input" id="supportChatboxInput" placeholder="Nhập câu hỏi bất kỳ, ví dụ: nên mua laptop nào cho sinh viên?">
                 <button type="submit" class="support-chatbox-send">Gửi</button>
             </form>
         </section>

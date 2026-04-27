@@ -1,0 +1,55 @@
+@model BlogArticleViewModel
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="breadcrumb-area mb-30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="breadcrumb-wrap">
+                    <nav aria-label="breadcrumb">
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                            <li class="breadcrumb-item"><a href="@Url.Action("Blog", "Home")">Tin tức</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">@Model.Title</li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<article class="blog-details-wrapper pt-30 pb-65">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 col-xl-8">
+                <div class="single-blogg-item">
+                    <div class="blogg-thumb mb-30">
+                        <img src="@Url.Content(Model.ImageUrl)" alt="@Model.Title">
+                    </div>
+                    <div class="blogg-content">
+                        <span class="post-date">@Model.CreatedAt.ToString("dd/MM/yyyy") · @Model.Author</span>
+                        <h2 class="mb-20">@Model.Title</h2>
+                        <p class="lead">@Model.Summary</p>
+
+                        @foreach (var paragraph in Model.Content.Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            <p>@paragraph</p>
+                        }
+
+                        <div class="mt-30">
+                            <a class="btn btn-secondary" href="@Url.Action("Blog", "Home")">Quay lại tin tức</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+
+<div class="scroll-top not-visible">
+    <i class="fa fa-angle-up"></i>
+</div>
